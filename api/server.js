@@ -9,6 +9,8 @@ const rateLimit = require('express-rate-limit');
 const { createServer } = require('http');
 const { Server } = require('socket.io');
 const redis = require('redis');
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./swagger');
 
 const config = require('./config');
 const logger = require('./utils/logger');
@@ -78,7 +80,19 @@ app.use('/uploads', express.static('uploads'));
 // Logging
 app.use(morgan('combined', { stream: { write: message => logger.info(message.trim()) } }));
 
+// Swagger API documentation
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 // Health check endpoint
+/**
+ * @openapi
+ * /health:
+ *   get:
+ *     summary: Health check endpoint
+ *     responses:
+ *       '200':
+ *         description: Returns API status
+ */
 app.get('/health', (req, res) => {
   res.status(200).json({
     status: 'ok',

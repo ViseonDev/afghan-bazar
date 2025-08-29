@@ -49,6 +49,7 @@ A mobile-first marketplace application connecting users across Afghanistan with 
 4. Access the application:
    - **App**: http://localhost:19006
    - **API**: http://localhost:4000
+   - **API Docs**: http://localhost:4000/api-docs
    - **MongoDB Admin**: http://localhost:8081
    - **Redis Admin**: http://localhost:8082
 
@@ -67,6 +68,7 @@ A mobile-first marketplace application connecting users across Afghanistan with 
 3. Access the application:
    - **App**: https://localhost
    - **API**: https://localhost/api
+   - **API Docs**: https://localhost/api-docs
 
 ## Project Structure
 
@@ -113,7 +115,7 @@ AfghanBazar/
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/api/products` | List products with filtering |
+| GET | `/api/products` | List products with filtering (supports `city` query) |
 | GET | `/api/products/:id` | Get product details |
 | GET | `/api/stores` | List stores with filtering |
 | GET | `/api/stores/:id` | Get store details |

@@ -11,13 +11,28 @@ const router = express.Router();
 // @route   GET /api/products
 // @desc    Get all products with filtering and search
 // @access  Public
+/**
+ * @openapi
+ * /api/products:
+ *   get:
+ *     summary: Get all products with optional filtering
+ *     parameters:
+ *       - in: query
+ *         name: city
+ *         schema:
+ *           type: string
+ *         description: Filter products by the store's city
+ *     responses:
+ *       '200':
+ *         description: A list of products
+ */
 router.get('/', validatePagination, optionalAuth, async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 20;
     const skip = (page - 1) * limit;
     
-    const { search, category, subcategory, minPrice, maxPrice, storeId, featured } = req.query;
+    const { search, category, subcategory, minPrice, maxPrice, storeId, featured, city } = req.query;
     
     // Build query
     let query = { isActive: true };
@@ -40,6 +55,13 @@ router.get('/', validatePagination, optionalAuth, async (req, res) => {
       if (maxPrice) query.price.$lte = parseFloat(maxPrice);
     }
     
+    if (city && !storeId) {
+      const storesInCity = await Store.find({
+        city: { $regex: city, $options: 'i' }
+      }).select('_id');
+      query.storeId = { $in: storesInCity.map((s) => s._id) };
+    }
+
     if (storeId) {
       query.storeId = storeId;
     }
