@@ -9,7 +9,7 @@ import {
   Image,
   Dimensions,
 } from 'react-native';
-import { Searchbar, Card, Chip, FAB, ActivityIndicator } from 'react-native-paper';
+import { Searchbar, Card, Chip, FAB } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { FlatList } from 'react-native-gesture-handler';
@@ -17,6 +17,7 @@ import { theme } from '../theme/theme';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import { productsAPI, storesAPI, categoriesAPI } from '../services/api';
+import LoadingIndicator from '../components/LoadingIndicator';
 
 const { width } = Dimensions.get('window');
 
@@ -154,12 +155,7 @@ export default function HomeScreen() {
   );
 
   if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={theme.colors.primary} />
-        <Text style={styles.loadingText}>{t('common.loading')}</Text>
-      </View>
-    );
+    return <LoadingIndicator />;
   }
 
   return (
@@ -285,15 +281,6 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    marginTop: 10,
-    color: theme.colors.text,
   },
   header: {
     flexDirection: 'row',
