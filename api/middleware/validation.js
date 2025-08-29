@@ -162,6 +162,30 @@ const validatePagination = [
   handleValidationErrors
 ];
 
+const validateObjectId = (paramName) => [
+  param(paramName)
+    .isMongoId()
+    .withMessage(`Valid ${paramName} is required`),
+  handleValidationErrors
+];
+
+const validateFlagReview = [
+  body('status')
+    .optional()
+    .isIn(['pending', 'under_review', 'resolved', 'dismissed'])
+    .withMessage('Invalid status'),
+  body('resolution')
+    .optional()
+    .isIn(['no_action', 'warning_issued', 'content_removed', 'account_suspended', 'account_banned'])
+    .withMessage('Invalid resolution'),
+  body('moderatorNotes')
+    .optional()
+    .trim()
+    .isLength({ max: 1000 })
+    .withMessage('Moderator notes must be no more than 1000 characters'),
+  handleValidationErrors
+];
+
 module.exports = {
   validateRegister,
   validateLogin,
@@ -171,5 +195,7 @@ module.exports = {
   validateFlag,
   validateMessage,
   validatePagination,
+  validateObjectId,
+  validateFlagReview,
   handleValidationErrors
 };

@@ -5,15 +5,35 @@ const Store = require('../models/Store');
 const Review = require('../models/Review');
 const User = require('../models/User');
 const { authenticate, authorize } = require('../middleware/auth');
-const { validateFlag, validatePagination } = require('../middleware/validation');
+const {
+  validateFlag,
+  validatePagination,
+  validateObjectId,
+  validateFlagReview
+} = require('../middleware/validation');
+const rateLimit = require('express-rate-limit');
 const logger = require('../utils/logger');
 
 const router = express.Router();
 
+const createFlagLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 20,
+  message: 'Too many reports submitted. Please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 // @route   POST /api/flags
 // @desc    Create a new flag/report
 // @access  Private
-router.post('/', authenticate, validateFlag, async (req, res) => {
+router.post(
+  '/',
+  authenticate,
+  authorize('shopper', 'merchant', 'moderator', 'admin'),
+  createFlagLimiter,
+  validateFlag,
+  async (req, res) => {
   try {
     const { targetType, targetId, reason, description } = req.body;
     
@@ -96,7 +116,8 @@ router.post('/', authenticate, validateFlag, async (req, res) => {
       error: 'Server error while submitting report'
     });
   }
-});
+  }
+);
 
 // @route   GET /api/flags
 // @desc    Get all flags (for moderators and admins)
@@ -158,7 +179,12 @@ router.get('/', authenticate, authorize('moderator', 'admin'), validatePaginatio
 // @route   GET /api/flags/:id
 // @desc    Get single flag with target details
 // @access  Private (Moderators and Admins only)
-router.get('/:id', authenticate, authorize('moderator', 'admin'), async (req, res) => {
+router.get(
+  '/:id',
+  authenticate,
+  authorize('moderator', 'admin'),
+  ...validateObjectId('id'),
+  async (req, res) => {
   try {
     const flag = await Flag.findById(req.params.id)
       .populate('reporterId', 'name email')
@@ -202,12 +228,19 @@ router.get('/:id', authenticate, authorize('moderator', 'admin'), async (req, re
       error: 'Server error while fetching flag'
     });
   }
-});
+  }
+);
 
 // @route   PUT /api/flags/:id/review
 // @desc    Update flag status (for moderators and admins)
 // @access  Private (Moderators and Admins only)
-router.put('/:id/review', authenticate, authorize('moderator', 'admin'), async (req, res) => {
+router.put(
+  '/:id/review',
+  authenticate,
+  authorize('moderator', 'admin'),
+  ...validateObjectId('id'),
+  ...validateFlagReview,
+  async (req, res) => {
   try {
     const { status, resolution, moderatorNotes } = req.body;
     
@@ -251,12 +284,18 @@ router.put('/:id/review', authenticate, authorize('moderator', 'admin'), async (
       error: 'Server error while updating flag'
     });
   }
-});
+  }
+);
 
 // @route   DELETE /api/flags/:id
 // @desc    Delete a flag
 // @access  Private (Admins only)
-router.delete('/:id', authenticate, authorize('admin'), async (req, res) => {
+router.delete(
+  '/:id',
+  authenticate,
+  authorize('admin'),
+  ...validateObjectId('id'),
+  async (req, res) => {
   try {
     const flag = await Flag.findById(req.params.id);
     if (!flag) {
@@ -281,7 +320,8 @@ router.delete('/:id', authenticate, authorize('admin'), async (req, res) => {
       error: 'Server error while deleting flag'
     });
   }
-});
+  }
+);
 
 // Helper function to apply resolution
 async function applyResolution(flag, resolution) {
