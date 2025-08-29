@@ -8,6 +8,7 @@ import {
   Alert,
   ScrollView,
   Dimensions,
+  Linking,
 } from 'react-native';
 import { Card, IconButton, Button, ProgressBar } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
@@ -17,9 +18,9 @@ import { useLanguage } from '../context/LanguageContext';
 
 const { width } = Dimensions.get('window');
 
-export default function ImageUploader({ 
-  images = [], 
-  onImagesChange, 
+export default function ImageUploader({
+  images = [],
+  onImagesChange,
   maxImages = 5,
   aspectRatio = '1:1',
   allowVideo = false,
@@ -38,7 +39,7 @@ export default function ImageUploader({
         [
           { text: t('common.cancel'), style: 'cancel' },
           { text: t('common.settings'), onPress: () => Linking.openSettings() },
-        ]
+        ],
       );
       return false;
     }
@@ -52,15 +53,22 @@ export default function ImageUploader({
     if (images.length >= maxImages) {
       Alert.alert(
         t('imageUploader.maxImagesReached'),
-        t('imageUploader.maxImagesMessage', { max: maxImages })
+        t('imageUploader.maxImagesMessage', { max: maxImages }),
       );
       return;
     }
 
     const options = {
-      mediaTypes: allowVideo ? ImagePicker.MediaTypeOptions.All : ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: allowVideo
+        ? ImagePicker.MediaTypeOptions.All
+        : ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      aspect: aspectRatio === '1:1' ? [1, 1] : aspectRatio === '16:9' ? [16, 9] : [4, 3],
+      aspect:
+        aspectRatio === '1:1'
+          ? [1, 1]
+          : aspectRatio === '16:9'
+            ? [16, 9]
+            : [4, 3],
       quality: quality,
       allowsMultipleSelection: !useCamera && maxImages > 1,
       selectionLimit: maxImages - images.length,
@@ -75,7 +83,7 @@ export default function ImageUploader({
       }
 
       if (!result.canceled) {
-        const newImages = result.assets.map(asset => ({
+        const newImages = result.assets.map((asset) => ({
           uri: asset.uri,
           type: asset.type,
           name: asset.fileName || `image_${Date.now()}.jpg`,
@@ -85,9 +93,9 @@ export default function ImageUploader({
         // Simulate upload progress
         setUploading(true);
         setUploadProgress(0);
-        
+
         const progressInterval = setInterval(() => {
-          setUploadProgress(prev => {
+          setUploadProgress((prev) => {
             if (prev >= 100) {
               clearInterval(progressInterval);
               setUploading(false);
@@ -121,7 +129,7 @@ export default function ImageUploader({
             onImagesChange(updatedImages);
           },
         },
-      ]
+      ],
     );
   };
 
@@ -140,15 +148,18 @@ export default function ImageUploader({
         { text: t('common.cancel'), style: 'cancel' },
         { text: t('imageUploader.camera'), onPress: () => pickImage(true) },
         { text: t('imageUploader.gallery'), onPress: () => pickImage(false) },
-      ]
+      ],
     );
   };
 
   const getImageDimensions = () => {
     const imageWidth = (width - 48) / 3; // 3 images per row with padding
-    const imageHeight = aspectRatio === '1:1' ? imageWidth : 
-                       aspectRatio === '16:9' ? imageWidth * 9 / 16 : 
-                       imageWidth * 3 / 4;
+    const imageHeight =
+      aspectRatio === '1:1'
+        ? imageWidth
+        : aspectRatio === '16:9'
+          ? (imageWidth * 9) / 16
+          : (imageWidth * 3) / 4;
     return { width: imageWidth, height: imageHeight };
   };
 
@@ -157,16 +168,19 @@ export default function ImageUploader({
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{t('imageUploader.images')}</Text>
-      
+
       {uploading && (
         <View style={styles.uploadProgress}>
           <Text style={styles.uploadText}>{t('imageUploader.uploading')}</Text>
-          <ProgressBar progress={uploadProgress / 100} color={theme.colors.primary} />
+          <ProgressBar
+            progress={uploadProgress / 100}
+            color={theme.colors.primary}
+          />
         </View>
       )}
 
-      <ScrollView 
-        horizontal 
+      <ScrollView
+        horizontal
         showsHorizontalScrollIndicator={false}
         style={styles.imageList}
         contentContainerStyle={styles.imageListContent}
@@ -178,7 +192,9 @@ export default function ImageUploader({
             onPress={showImageOptions}
           >
             <Ionicons name="add" size={32} color={theme.colors.placeholder} />
-            <Text style={styles.addImageText}>{t('imageUploader.addImage')}</Text>
+            <Text style={styles.addImageText}>
+              {t('imageUploader.addImage')}
+            </Text>
           </TouchableOpacity>
         )}
 
@@ -186,14 +202,16 @@ export default function ImageUploader({
         {images.map((image, index) => (
           <View key={index} style={[styles.imageItem, imageDimensions]}>
             <Image source={{ uri: image.uri }} style={styles.image} />
-            
+
             {/* Primary Badge */}
             {index === 0 && (
               <View style={styles.primaryBadge}>
-                <Text style={styles.primaryText}>{t('imageUploader.primary')}</Text>
+                <Text style={styles.primaryText}>
+                  {t('imageUploader.primary')}
+                </Text>
               </View>
             )}
-            
+
             {/* Remove Button */}
             <TouchableOpacity
               style={styles.removeButton}
@@ -201,7 +219,7 @@ export default function ImageUploader({
             >
               <Ionicons name="close" size={18} color="#fff" />
             </TouchableOpacity>
-            
+
             {/* Reorder Buttons */}
             {images.length > 1 && (
               <View style={styles.reorderButtons}>
@@ -229,12 +247,12 @@ export default function ImageUploader({
 
       {/* Helper Text */}
       <Text style={styles.helperText}>
-        {t('imageUploader.helperText', { 
-          current: images.length, 
-          max: maxImages 
+        {t('imageUploader.helperText', {
+          current: images.length,
+          max: maxImages,
         })}
       </Text>
-      
+
       {images.length > 0 && (
         <Text style={styles.primaryHelperText}>
           {t('imageUploader.primaryHelperText')}

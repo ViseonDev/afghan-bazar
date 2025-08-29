@@ -22,7 +22,7 @@ export default function ProductListScreen() {
   const route = useRoute();
   const { t } = useLanguage();
   const { user } = useAuth();
-  
+
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -55,7 +55,7 @@ export default function ProductListScreen() {
       }
 
       const response = await productsAPI.getProducts(params);
-      
+
       if (response.success) {
         const newProducts = response.data;
         setProducts(reset ? newProducts : [...products, ...newProducts]);
@@ -124,9 +124,7 @@ export default function ProductListScreen() {
               {item.rating?.average?.toFixed(1) || 'N/A'}
             </Text>
           </View>
-          <Text style={styles.productLocation}>
-            {item.storeId?.city}
-          </Text>
+          <Text style={styles.productLocation}>{item.storeId?.city}</Text>
         </View>
       </View>
     </TouchableOpacity>

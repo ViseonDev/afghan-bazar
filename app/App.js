@@ -61,12 +61,12 @@ function AppContent() {
         await Font.loadAsync({
           // Add custom fonts if needed
         });
-        
+
         // Check authentication state
         await checkAuthState();
-        
+
         // Artificially delay for demo purposes
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
       } catch (e) {
         console.warn(e);
       } finally {
@@ -94,31 +94,49 @@ function AppContent() {
           // Authenticated screens
           <>
             <Stack.Screen name="Main" component={DrawerNavigator} />
-            <Stack.Screen name="ProductDetail" component={ProductDetailScreen} />
+            <Stack.Screen
+              name="ProductDetail"
+              component={ProductDetailScreen}
+            />
             <Stack.Screen name="StoreDetail" component={StoreDetailScreen} />
             <Stack.Screen name="Chat" component={ChatScreen} />
             <Stack.Screen name="Profile" component={ProfileScreen} />
             <Stack.Screen name="Settings" component={SettingsScreen} />
             {user.role === 'merchant' && (
               <>
-                <Stack.Screen name="MerchantDashboard" component={MerchantDashboardScreen} />
-                <Stack.Screen name="ManageStores" component={ManageStoresScreen} />
-                <Stack.Screen name="ManageProducts" component={ManageProductsScreen} />
-                <Stack.Screen name="CreateStore" component={CreateStoreScreen} />
+                <Stack.Screen
+                  name="MerchantDashboard"
+                  component={MerchantDashboardScreen}
+                />
+                <Stack.Screen
+                  name="ManageStores"
+                  component={ManageStoresScreen}
+                />
+                <Stack.Screen
+                  name="ManageProducts"
+                  component={ManageProductsScreen}
+                />
+                <Stack.Screen
+                  name="CreateStore"
+                  component={CreateStoreScreen}
+                />
                 <Stack.Screen name="EditStore" component={CreateStoreScreen} />
-                <Stack.Screen name="CreateProduct" component={CreateProductScreen} />
-                <Stack.Screen name="EditProduct" component={CreateProductScreen} />
+                <Stack.Screen
+                  name="CreateProduct"
+                  component={CreateProductScreen}
+                />
+                <Stack.Screen
+                  name="EditProduct"
+                  component={CreateProductScreen}
+                />
               </>
             )}
-            {(user.role === 'admin' || user.role === 'moderator') && (
-              <>
-                <Stack.Screen name="AdminDashboard" component={AdminDashboardScreen} />
-                <Stack.Screen name="UserManagement" component={UserManagementScreen} />
-                <Stack.Screen name="ContentModeration" component={ContentModerationScreen} />
-                <Stack.Screen name="SystemSettings" component={SystemSettingsScreen} />
-                <Stack.Screen name="Reports" component={ReportsScreen} />
-                <Stack.Screen name="FlaggedContent" component={FlaggedContentScreen} />
-              </>
+
+            {user.role === 'admin' && (
+              <Stack.Screen
+                name="AdminDashboard"
+                component={AdminDashboardScreen}
+              />
             )}
           </>
         ) : (
@@ -126,7 +144,10 @@ function AppContent() {
           <>
             <Stack.Screen name="Home" component={HomeScreen} />
             <Stack.Screen name="ProductList" component={ProductListScreen} />
-            <Stack.Screen name="ProductDetail" component={ProductDetailScreen} />
+            <Stack.Screen
+              name="ProductDetail"
+              component={ProductDetailScreen}
+            />
             <Stack.Screen name="StoreList" component={StoreListScreen} />
             <Stack.Screen name="StoreDetail" component={StoreDetailScreen} />
             <Stack.Screen name="Login" component={LoginScreen} />

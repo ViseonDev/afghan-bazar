@@ -20,7 +20,7 @@ export default function LoginScreen() {
   const navigation = useNavigation();
   const { login } = useAuth();
   const { t } = useLanguage();
-  
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -29,29 +29,29 @@ export default function LoginScreen() {
 
   const validateForm = () => {
     const newErrors = {};
-    
+
     if (!email.trim()) {
       newErrors.email = t('auth.validation.required');
     } else if (!/\S+@\S+\.\S+/.test(email)) {
       newErrors.email = t('auth.validation.email');
     }
-    
+
     if (!password.trim()) {
       newErrors.password = t('auth.validation.required');
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleLogin = async () => {
     if (!validateForm()) return;
-    
+
     setLoading(true);
-    
+
     try {
       const result = await login(email.trim(), password);
-      
+
       if (result.success) {
         // Navigation will be handled by AuthContext
       }

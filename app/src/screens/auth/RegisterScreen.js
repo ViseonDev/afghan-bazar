@@ -9,7 +9,14 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
-import { TextInput, Button, Card, HelperText, Menu, Divider } from 'react-native-paper';
+import {
+  TextInput,
+  Button,
+  Card,
+  HelperText,
+  Menu,
+  Divider,
+} from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { theme } from '../../theme/theme';
 import { useAuth } from '../../context/AuthContext';
@@ -19,7 +26,7 @@ export default function RegisterScreen() {
   const navigation = useNavigation();
   const { register } = useAuth();
   const { t, getSupportedLanguages } = useLanguage();
-  
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -27,7 +34,7 @@ export default function RegisterScreen() {
     confirmPassword: '',
     language: 'en',
   });
-  
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -38,40 +45,40 @@ export default function RegisterScreen() {
 
   const validateForm = () => {
     const newErrors = {};
-    
+
     if (!formData.name.trim()) {
       newErrors.name = t('auth.validation.required');
     } else if (formData.name.trim().length < 2) {
       newErrors.name = t('auth.validation.name');
     }
-    
+
     if (!formData.email.trim()) {
       newErrors.email = t('auth.validation.required');
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = t('auth.validation.email');
     }
-    
+
     if (!formData.password.trim()) {
       newErrors.password = t('auth.validation.required');
     } else if (formData.password.length < 8) {
       newErrors.password = t('auth.validation.password');
     }
-    
+
     if (!formData.confirmPassword.trim()) {
       newErrors.confirmPassword = t('auth.validation.required');
     } else if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = t('auth.validation.confirmPassword');
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleRegister = async () => {
     if (!validateForm()) return;
-    
+
     setLoading(true);
-    
+
     try {
       const result = await register({
         name: formData.name.trim(),
@@ -79,7 +86,7 @@ export default function RegisterScreen() {
         password: formData.password,
         language: formData.language,
       });
-      
+
       if (result.success) {
         // Navigation will be handled by AuthContext
       }
@@ -91,15 +98,15 @@ export default function RegisterScreen() {
   };
 
   const updateFormData = (field, value) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
     // Clear error when user starts typing
     if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
+      setErrors((prev) => ({ ...prev, [field]: '' }));
     }
   };
 
   const getLanguageName = (code) => {
-    const language = supportedLanguages.find(lang => lang.code === code);
+    const language = supportedLanguages.find((lang) => lang.code === code);
     return language ? language.nativeName : code;
   };
 

@@ -7,7 +7,14 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import { Card, List, Switch, Divider, Button, RadioButton } from 'react-native-paper';
+import {
+  Card,
+  List,
+  Switch,
+  Divider,
+  Button,
+  RadioButton,
+} from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { theme } from '../theme/theme';
@@ -18,7 +25,7 @@ export default function SettingsScreen() {
   const navigation = useNavigation();
   const { t, currentLanguage, changeLanguage } = useLanguage();
   const { user } = useAuth();
-  
+
   const [settings, setSettings] = useState({
     notifications: {
       push: true,
@@ -38,7 +45,7 @@ export default function SettingsScreen() {
   });
 
   const handleSettingChange = (category, setting, value) => {
-    setSettings(prev => ({
+    setSettings((prev) => ({
       ...prev,
       [category]: {
         ...prev[category],
@@ -49,7 +56,7 @@ export default function SettingsScreen() {
 
   const handleLanguageChange = (languageCode) => {
     changeLanguage(languageCode);
-    setSettings(prev => ({
+    setSettings((prev) => ({
       ...prev,
       language: languageCode,
     }));
@@ -89,7 +96,7 @@ export default function SettingsScreen() {
             });
           },
         },
-      ]
+      ],
     );
   };
 
@@ -113,14 +120,17 @@ export default function SettingsScreen() {
                   style: 'destructive',
                   onPress: () => {
                     // Handle account deletion
-                    Alert.alert(t('common.info'), t('settings.accountDeletionPending'));
+                    Alert.alert(
+                      t('common.info'),
+                      t('settings.accountDeletionPending'),
+                    );
                   },
                 },
-              ]
+              ],
             );
           },
         },
-      ]
+      ],
     );
   };
 
@@ -143,7 +153,10 @@ export default function SettingsScreen() {
         </TouchableOpacity>
       </View>
 
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+      >
         {/* Language Settings */}
         <Card style={styles.card}>
           <Card.Content>
@@ -156,17 +169,23 @@ export default function SettingsScreen() {
                 ]}
                 onPress={() => handleLanguageChange('en')}
               >
-                <Text style={[
-                  styles.languageText,
-                  settings.language === 'en' && styles.selectedLanguageText,
-                ]}>
+                <Text
+                  style={[
+                    styles.languageText,
+                    settings.language === 'en' && styles.selectedLanguageText,
+                  ]}
+                >
                   English
                 </Text>
                 {settings.language === 'en' && (
-                  <Ionicons name="checkmark" size={20} color={theme.colors.primary} />
+                  <Ionicons
+                    name="checkmark"
+                    size={20}
+                    color={theme.colors.primary}
+                  />
                 )}
               </TouchableOpacity>
-              
+
               <TouchableOpacity
                 style={[
                   styles.languageOption,
@@ -174,17 +193,23 @@ export default function SettingsScreen() {
                 ]}
                 onPress={() => handleLanguageChange('fa')}
               >
-                <Text style={[
-                  styles.languageText,
-                  settings.language === 'fa' && styles.selectedLanguageText,
-                ]}>
+                <Text
+                  style={[
+                    styles.languageText,
+                    settings.language === 'fa' && styles.selectedLanguageText,
+                  ]}
+                >
                   دری (Dari)
                 </Text>
                 {settings.language === 'fa' && (
-                  <Ionicons name="checkmark" size={20} color={theme.colors.primary} />
+                  <Ionicons
+                    name="checkmark"
+                    size={20}
+                    color={theme.colors.primary}
+                  />
                 )}
               </TouchableOpacity>
-              
+
               <TouchableOpacity
                 style={[
                   styles.languageOption,
@@ -192,14 +217,20 @@ export default function SettingsScreen() {
                 ]}
                 onPress={() => handleLanguageChange('ps')}
               >
-                <Text style={[
-                  styles.languageText,
-                  settings.language === 'ps' && styles.selectedLanguageText,
-                ]}>
+                <Text
+                  style={[
+                    styles.languageText,
+                    settings.language === 'ps' && styles.selectedLanguageText,
+                  ]}
+                >
                   پښتو (Pashto)
                 </Text>
                 {settings.language === 'ps' && (
-                  <Ionicons name="checkmark" size={20} color={theme.colors.primary} />
+                  <Ionicons
+                    name="checkmark"
+                    size={20}
+                    color={theme.colors.primary}
+                  />
                 )}
               </TouchableOpacity>
             </View>
@@ -209,8 +240,10 @@ export default function SettingsScreen() {
         {/* Notification Settings */}
         <Card style={styles.card}>
           <Card.Content>
-            <Text style={styles.sectionTitle}>{t('settings.notifications')}</Text>
-            
+            <Text style={styles.sectionTitle}>
+              {t('settings.notifications')}
+            </Text>
+
             <List.Item
               title={t('settings.pushNotifications')}
               description={t('settings.pushNotificationsDesc')}
@@ -218,13 +251,15 @@ export default function SettingsScreen() {
               right={() => (
                 <Switch
                   value={settings.notifications.push}
-                  onValueChange={(value) => handleSettingChange('notifications', 'push', value)}
+                  onValueChange={(value) =>
+                    handleSettingChange('notifications', 'push', value)
+                  }
                 />
               )}
             />
-            
+
             <Divider />
-            
+
             <List.Item
               title={t('settings.emailNotifications')}
               description={t('settings.emailNotificationsDesc')}
@@ -232,13 +267,15 @@ export default function SettingsScreen() {
               right={() => (
                 <Switch
                   value={settings.notifications.email}
-                  onValueChange={(value) => handleSettingChange('notifications', 'email', value)}
+                  onValueChange={(value) =>
+                    handleSettingChange('notifications', 'email', value)
+                  }
                 />
               )}
             />
-            
+
             <Divider />
-            
+
             <List.Item
               title={t('settings.newMessages')}
               description={t('settings.newMessagesDesc')}
@@ -246,13 +283,15 @@ export default function SettingsScreen() {
               right={() => (
                 <Switch
                   value={settings.notifications.newMessages}
-                  onValueChange={(value) => handleSettingChange('notifications', 'newMessages', value)}
+                  onValueChange={(value) =>
+                    handleSettingChange('notifications', 'newMessages', value)
+                  }
                 />
               )}
             />
-            
+
             <Divider />
-            
+
             <List.Item
               title={t('settings.productUpdates')}
               description={t('settings.productUpdatesDesc')}
@@ -260,13 +299,19 @@ export default function SettingsScreen() {
               right={() => (
                 <Switch
                   value={settings.notifications.productUpdates}
-                  onValueChange={(value) => handleSettingChange('notifications', 'productUpdates', value)}
+                  onValueChange={(value) =>
+                    handleSettingChange(
+                      'notifications',
+                      'productUpdates',
+                      value,
+                    )
+                  }
                 />
               )}
             />
-            
+
             <Divider />
-            
+
             <List.Item
               title={t('settings.promotions')}
               description={t('settings.promotionsDesc')}
@@ -274,7 +319,9 @@ export default function SettingsScreen() {
               right={() => (
                 <Switch
                   value={settings.notifications.promotions}
-                  onValueChange={(value) => handleSettingChange('notifications', 'promotions', value)}
+                  onValueChange={(value) =>
+                    handleSettingChange('notifications', 'promotions', value)
+                  }
                 />
               )}
             />
@@ -285,7 +332,7 @@ export default function SettingsScreen() {
         <Card style={styles.card}>
           <Card.Content>
             <Text style={styles.sectionTitle}>{t('settings.privacy')}</Text>
-            
+
             <List.Item
               title={t('settings.showEmail')}
               description={t('settings.showEmailDesc')}
@@ -293,13 +340,15 @@ export default function SettingsScreen() {
               right={() => (
                 <Switch
                   value={settings.privacy.showEmail}
-                  onValueChange={(value) => handleSettingChange('privacy', 'showEmail', value)}
+                  onValueChange={(value) =>
+                    handleSettingChange('privacy', 'showEmail', value)
+                  }
                 />
               )}
             />
-            
+
             <Divider />
-            
+
             <List.Item
               title={t('settings.showPhone')}
               description={t('settings.showPhoneDesc')}
@@ -307,13 +356,15 @@ export default function SettingsScreen() {
               right={() => (
                 <Switch
                   value={settings.privacy.showPhone}
-                  onValueChange={(value) => handleSettingChange('privacy', 'showPhone', value)}
+                  onValueChange={(value) =>
+                    handleSettingChange('privacy', 'showPhone', value)
+                  }
                 />
               )}
             />
-            
+
             <Divider />
-            
+
             <List.Item
               title={t('settings.allowSearch')}
               description={t('settings.allowSearchDesc')}
@@ -321,7 +372,9 @@ export default function SettingsScreen() {
               right={() => (
                 <Switch
                   value={settings.privacy.allowSearch}
-                  onValueChange={(value) => handleSettingChange('privacy', 'allowSearch', value)}
+                  onValueChange={(value) =>
+                    handleSettingChange('privacy', 'allowSearch', value)
+                  }
                 />
               )}
             />
@@ -332,7 +385,7 @@ export default function SettingsScreen() {
         <Card style={styles.card}>
           <Card.Content>
             <Text style={styles.sectionTitle}>{t('settings.account')}</Text>
-            
+
             <List.Item
               title={t('settings.changePassword')}
               description={t('settings.changePasswordDesc')}
@@ -343,9 +396,9 @@ export default function SettingsScreen() {
                 Alert.alert(t('common.info'), t('settings.featureComingSoon'));
               }}
             />
-            
+
             <Divider />
-            
+
             <List.Item
               title={t('settings.downloadData')}
               description={t('settings.downloadDataDesc')}
@@ -353,7 +406,10 @@ export default function SettingsScreen() {
               right={(props) => <List.Icon {...props} icon="chevron-right" />}
               onPress={() => {
                 // Handle data download
-                Alert.alert(t('common.info'), t('settings.dataDownloadRequested'));
+                Alert.alert(
+                  t('common.info'),
+                  t('settings.dataDownloadRequested'),
+                );
               }}
             />
           </Card.Content>
@@ -363,7 +419,7 @@ export default function SettingsScreen() {
         <Card style={styles.dangerCard}>
           <Card.Content>
             <Text style={styles.dangerTitle}>{t('settings.dangerZone')}</Text>
-            
+
             <Button
               mode="outlined"
               onPress={handleResetSettings}
@@ -373,7 +429,7 @@ export default function SettingsScreen() {
             >
               {t('settings.resetSettings')}
             </Button>
-            
+
             <Button
               mode="outlined"
               onPress={handleDeleteAccount}
@@ -390,15 +446,15 @@ export default function SettingsScreen() {
         <Card style={styles.card}>
           <Card.Content>
             <Text style={styles.sectionTitle}>{t('settings.appInfo')}</Text>
-            
+
             <List.Item
               title={t('settings.version')}
               description="1.0.0"
               left={(props) => <List.Icon {...props} icon="information" />}
             />
-            
+
             <Divider />
-            
+
             <List.Item
               title={t('settings.termsOfService')}
               left={(props) => <List.Icon {...props} icon="file-document" />}
@@ -408,9 +464,9 @@ export default function SettingsScreen() {
                 Alert.alert(t('common.info'), t('settings.featureComingSoon'));
               }}
             />
-            
+
             <Divider />
-            
+
             <List.Item
               title={t('settings.privacyPolicy')}
               left={(props) => <List.Icon {...props} icon="shield-account" />}

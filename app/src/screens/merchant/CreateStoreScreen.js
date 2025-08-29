@@ -9,7 +9,14 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { TextInput, Button, Card, Chip, HelperText, SegmentedButtons } from 'react-native-paper';
+import {
+  TextInput,
+  Button,
+  Card,
+  Chip,
+  HelperText,
+  SegmentedButtons,
+} from 'react-native-paper';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
@@ -24,10 +31,10 @@ export default function CreateStoreScreen() {
   const route = useRoute();
   const { t } = useLanguage();
   const { user } = useAuth();
-  
+
   const isEditing = route.params?.storeId;
   const storeId = route.params?.storeId;
-  
+
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -56,7 +63,7 @@ export default function CreateStoreScreen() {
     images: [],
     isActive: true,
   });
-  
+
   const [errors, setErrors] = useState({});
   const [categories, setCategories] = useState([]);
   const [selectedTab, setSelectedTab] = useState('basic');
@@ -83,7 +90,7 @@ export default function CreateStoreScreen() {
     try {
       setLoading(true);
       const response = await storesAPI.getStore(storeId);
-      
+
       if (response.success) {
         setFormData({
           ...response.data,
@@ -100,35 +107,35 @@ export default function CreateStoreScreen() {
 
   const validateForm = () => {
     const newErrors = {};
-    
+
     if (!formData.name.trim()) {
       newErrors.name = t('merchant.nameRequired');
     }
-    
+
     if (!formData.description.trim()) {
       newErrors.description = t('merchant.descriptionRequired');
     }
-    
+
     if (!formData.category) {
       newErrors.category = t('merchant.categoryRequired');
     }
-    
+
     if (!formData.phone.trim()) {
       newErrors.phone = t('merchant.phoneRequired');
     }
-    
+
     if (!formData.address.street.trim()) {
       newErrors.street = t('merchant.streetRequired');
     }
-    
+
     if (!formData.address.city.trim()) {
       newErrors.city = t('merchant.cityRequired');
     }
-    
+
     if (!formData.address.province.trim()) {
       newErrors.province = t('merchant.provinceRequired');
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -138,22 +145,22 @@ export default function CreateStoreScreen() {
       Alert.alert(t('common.error'), t('merchant.pleaseFixErrors'));
       return;
     }
-    
+
     try {
       setLoading(true);
-      
+
       const submitData = {
         ...formData,
         owner: user._id,
       };
-      
+
       let response;
       if (isEditing) {
         response = await storesAPI.updateStore(storeId, submitData);
       } else {
         response = await storesAPI.createStore(submitData);
       }
-      
+
       if (response.success) {
         Alert.alert(
           t('common.success'),
@@ -163,10 +170,13 @@ export default function CreateStoreScreen() {
               text: t('common.ok'),
               onPress: () => navigation.goBack(),
             },
-          ]
+          ],
         );
       } else {
-        Alert.alert(t('common.error'), response.message || t('merchant.errorSavingStore'));
+        Alert.alert(
+          t('common.error'),
+          response.message || t('merchant.errorSavingStore'),
+        );
       }
     } catch (error) {
       console.error('Error saving store:', error);
@@ -177,7 +187,7 @@ export default function CreateStoreScreen() {
   };
 
   const handleImageSelect = (images) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       images: images,
       coverImage: images[0] || null,
@@ -185,7 +195,7 @@ export default function CreateStoreScreen() {
   };
 
   const handleBusinessHoursChange = (day, field, value) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       businessHours: {
         ...prev.businessHours,
@@ -200,11 +210,13 @@ export default function CreateStoreScreen() {
   const renderBasicInfo = () => (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>{t('merchant.basicInformation')}</Text>
-      
+
       <TextInput
         label={t('merchant.storeName')}
         value={formData.name}
-        onChangeText={(text) => setFormData(prev => ({ ...prev, name: text }))}
+        onChangeText={(text) =>
+          setFormData((prev) => ({ ...prev, name: text }))
+        }
         style={styles.input}
         error={!!errors.name}
         mode="outlined"
@@ -212,11 +224,13 @@ export default function CreateStoreScreen() {
       <HelperText type="error" visible={!!errors.name}>
         {errors.name}
       </HelperText>
-      
+
       <TextInput
         label={t('merchant.description')}
         value={formData.description}
-        onChangeText={(text) => setFormData(prev => ({ ...prev, description: text }))}
+        onChangeText={(text) =>
+          setFormData((prev) => ({ ...prev, description: text }))
+        }
         style={styles.input}
         error={!!errors.description}
         mode="outlined"
@@ -226,15 +240,17 @@ export default function CreateStoreScreen() {
       <HelperText type="error" visible={!!errors.description}>
         {errors.description}
       </HelperText>
-      
+
       <Text style={styles.label}>{t('merchant.category')}</Text>
       <View style={styles.categoryContainer}>
-        {categories.map(category => (
+        {categories.map((category) => (
           <Chip
             key={category._id}
             mode={formData.category === category._id ? 'flat' : 'outlined'}
             selected={formData.category === category._id}
-            onPress={() => setFormData(prev => ({ ...prev, category: category._id }))}
+            onPress={() =>
+              setFormData((prev) => ({ ...prev, category: category._id }))
+            }
             style={styles.categoryChip}
           >
             {category.name}
@@ -249,12 +265,16 @@ export default function CreateStoreScreen() {
 
   const renderContactInfo = () => (
     <View style={styles.section}>
-      <Text style={styles.sectionTitle}>{t('merchant.contactInformation')}</Text>
-      
+      <Text style={styles.sectionTitle}>
+        {t('merchant.contactInformation')}
+      </Text>
+
       <TextInput
         label={t('merchant.phone')}
         value={formData.phone}
-        onChangeText={(text) => setFormData(prev => ({ ...prev, phone: text }))}
+        onChangeText={(text) =>
+          setFormData((prev) => ({ ...prev, phone: text }))
+        }
         style={styles.input}
         error={!!errors.phone}
         mode="outlined"
@@ -263,20 +283,24 @@ export default function CreateStoreScreen() {
       <HelperText type="error" visible={!!errors.phone}>
         {errors.phone}
       </HelperText>
-      
+
       <TextInput
         label={t('merchant.email')}
         value={formData.email}
-        onChangeText={(text) => setFormData(prev => ({ ...prev, email: text }))}
+        onChangeText={(text) =>
+          setFormData((prev) => ({ ...prev, email: text }))
+        }
         style={styles.input}
         mode="outlined"
         keyboardType="email-address"
       />
-      
+
       <TextInput
         label={t('merchant.website')}
         value={formData.website}
-        onChangeText={(text) => setFormData(prev => ({ ...prev, website: text }))}
+        onChangeText={(text) =>
+          setFormData((prev) => ({ ...prev, website: text }))
+        }
         style={styles.input}
         mode="outlined"
         keyboardType="url"
@@ -287,14 +311,16 @@ export default function CreateStoreScreen() {
   const renderAddress = () => (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>{t('merchant.address')}</Text>
-      
+
       <TextInput
         label={t('merchant.street')}
         value={formData.address.street}
-        onChangeText={(text) => setFormData(prev => ({ 
-          ...prev, 
-          address: { ...prev.address, street: text } 
-        }))}
+        onChangeText={(text) =>
+          setFormData((prev) => ({
+            ...prev,
+            address: { ...prev.address, street: text },
+          }))
+        }
         style={styles.input}
         error={!!errors.street}
         mode="outlined"
@@ -302,15 +328,17 @@ export default function CreateStoreScreen() {
       <HelperText type="error" visible={!!errors.street}>
         {errors.street}
       </HelperText>
-      
+
       <View style={styles.row}>
         <TextInput
           label={t('merchant.city')}
           value={formData.address.city}
-          onChangeText={(text) => setFormData(prev => ({ 
-            ...prev, 
-            address: { ...prev.address, city: text } 
-          }))}
+          onChangeText={(text) =>
+            setFormData((prev) => ({
+              ...prev,
+              address: { ...prev.address, city: text },
+            }))
+          }
           style={[styles.input, styles.halfWidth]}
           error={!!errors.city}
           mode="outlined"
@@ -318,23 +346,27 @@ export default function CreateStoreScreen() {
         <TextInput
           label={t('merchant.province')}
           value={formData.address.province}
-          onChangeText={(text) => setFormData(prev => ({ 
-            ...prev, 
-            address: { ...prev.address, province: text } 
-          }))}
+          onChangeText={(text) =>
+            setFormData((prev) => ({
+              ...prev,
+              address: { ...prev.address, province: text },
+            }))
+          }
           style={[styles.input, styles.halfWidth]}
           error={!!errors.province}
           mode="outlined"
         />
       </View>
-      
+
       <TextInput
         label={t('merchant.postalCode')}
         value={formData.address.postalCode}
-        onChangeText={(text) => setFormData(prev => ({ 
-          ...prev, 
-          address: { ...prev.address, postalCode: text } 
-        }))}
+        onChangeText={(text) =>
+          setFormData((prev) => ({
+            ...prev,
+            address: { ...prev.address, postalCode: text },
+          }))
+        }
         style={styles.input}
         mode="outlined"
         keyboardType="numeric"
@@ -345,7 +377,7 @@ export default function CreateStoreScreen() {
   const renderBusinessHours = () => (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>{t('merchant.businessHours')}</Text>
-      
+
       {Object.entries(formData.businessHours).map(([day, hours]) => (
         <Card key={day} style={styles.dayCard}>
           <Card.Content>
@@ -354,19 +386,23 @@ export default function CreateStoreScreen() {
               <Chip
                 mode={hours.closed ? 'flat' : 'outlined'}
                 selected={hours.closed}
-                onPress={() => handleBusinessHoursChange(day, 'closed', !hours.closed)}
+                onPress={() =>
+                  handleBusinessHoursChange(day, 'closed', !hours.closed)
+                }
                 style={styles.closedChip}
               >
                 {hours.closed ? t('merchant.closed') : t('merchant.open')}
               </Chip>
             </View>
-            
+
             {!hours.closed && (
               <View style={styles.hoursRow}>
                 <TextInput
                   label={t('merchant.openTime')}
                   value={hours.open}
-                  onChangeText={(text) => handleBusinessHoursChange(day, 'open', text)}
+                  onChangeText={(text) =>
+                    handleBusinessHoursChange(day, 'open', text)
+                  }
                   style={[styles.input, styles.timeInput]}
                   mode="outlined"
                   keyboardType="numeric"
@@ -374,7 +410,9 @@ export default function CreateStoreScreen() {
                 <TextInput
                   label={t('merchant.closeTime')}
                   value={hours.close}
-                  onChangeText={(text) => handleBusinessHoursChange(day, 'close', text)}
+                  onChangeText={(text) =>
+                    handleBusinessHoursChange(day, 'close', text)
+                  }
                   style={[styles.input, styles.timeInput]}
                   mode="outlined"
                   keyboardType="numeric"
@@ -454,7 +492,10 @@ export default function CreateStoreScreen() {
       </View>
 
       {/* Content */}
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+      >
         {renderTabContent()}
       </ScrollView>
 

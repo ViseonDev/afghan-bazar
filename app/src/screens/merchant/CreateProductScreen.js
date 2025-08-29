@@ -9,7 +9,15 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { TextInput, Button, Card, Chip, HelperText, SegmentedButtons, Switch } from 'react-native-paper';
+import {
+  TextInput,
+  Button,
+  Card,
+  Chip,
+  HelperText,
+  SegmentedButtons,
+  Switch,
+} from 'react-native-paper';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { theme } from '../../theme/theme';
@@ -23,11 +31,11 @@ export default function CreateProductScreen() {
   const route = useRoute();
   const { t } = useLanguage();
   const { user } = useAuth();
-  
+
   const isEditing = route.params?.productId;
   const productId = route.params?.productId;
   const preselectedStore = route.params?.storeId;
-  
+
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -52,7 +60,7 @@ export default function CreateProductScreen() {
     specifications: [],
     variants: [],
   });
-  
+
   const [errors, setErrors] = useState({});
   const [categories, setCategories] = useState([]);
   const [stores, setStores] = useState([]);
@@ -94,7 +102,7 @@ export default function CreateProductScreen() {
     try {
       setLoading(true);
       const response = await productsAPI.getProduct(productId);
-      
+
       if (response.success) {
         setFormData({
           ...response.data,
@@ -104,7 +112,11 @@ export default function CreateProductScreen() {
           originalPrice: response.data.originalPrice?.toString() || '',
           stock: response.data.stock?.toString() || '',
           weight: response.data.weight?.toString() || '',
-          dimensions: response.data.dimensions || { length: '', width: '', height: '' },
+          dimensions: response.data.dimensions || {
+            length: '',
+            width: '',
+            height: '',
+          },
         });
       }
     } catch (error) {
@@ -117,43 +129,49 @@ export default function CreateProductScreen() {
 
   const validateForm = () => {
     const newErrors = {};
-    
+
     if (!formData.name.trim()) {
       newErrors.name = t('merchant.nameRequired');
     }
-    
+
     if (!formData.description.trim()) {
       newErrors.description = t('merchant.descriptionRequired');
     }
-    
+
     if (!formData.price.trim()) {
       newErrors.price = t('merchant.priceRequired');
     } else if (isNaN(formData.price) || parseFloat(formData.price) <= 0) {
       newErrors.price = t('merchant.priceInvalid');
     }
-    
+
     if (!formData.category) {
       newErrors.category = t('merchant.categoryRequired');
     }
-    
+
     if (!formData.storeId) {
       newErrors.storeId = t('merchant.storeRequired');
     }
-    
+
     if (!formData.stock.trim()) {
       newErrors.stock = t('merchant.stockRequired');
-    } else if (isNaN(formData.stock) || parseInt(formData.stock) < 0) {
+    } else if (isNaN(formData.stock) || parseInt(formData.stock, 10) < 0) {
       newErrors.stock = t('merchant.stockInvalid');
     }
-    
-    if (formData.originalPrice && (isNaN(formData.originalPrice) || parseFloat(formData.originalPrice) <= 0)) {
+
+    if (
+      formData.originalPrice &&
+      (isNaN(formData.originalPrice) || parseFloat(formData.originalPrice) <= 0)
+    ) {
       newErrors.originalPrice = t('merchant.originalPriceInvalid');
     }
-    
-    if (formData.weight && (isNaN(formData.weight) || parseFloat(formData.weight) <= 0)) {
+
+    if (
+      formData.weight &&
+      (isNaN(formData.weight) || parseFloat(formData.weight) <= 0)
+    ) {
       newErrors.weight = t('merchant.weightInvalid');
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -163,43 +181,56 @@ export default function CreateProductScreen() {
       Alert.alert(t('common.error'), t('merchant.pleaseFixErrors'));
       return;
     }
-    
+
     try {
       setLoading(true);
-      
+
       const submitData = {
         ...formData,
         price: parseFloat(formData.price),
-        originalPrice: formData.originalPrice ? parseFloat(formData.originalPrice) : null,
-        stock: parseInt(formData.stock),
+        originalPrice: formData.originalPrice
+          ? parseFloat(formData.originalPrice)
+          : null,
+        stock: parseInt(formData.stock, 10),
         weight: formData.weight ? parseFloat(formData.weight) : null,
         dimensions: {
-          length: formData.dimensions.length ? parseFloat(formData.dimensions.length) : null,
-          width: formData.dimensions.width ? parseFloat(formData.dimensions.width) : null,
-          height: formData.dimensions.height ? parseFloat(formData.dimensions.height) : null,
+          length: formData.dimensions.length
+            ? parseFloat(formData.dimensions.length)
+            : null,
+          width: formData.dimensions.width
+            ? parseFloat(formData.dimensions.width)
+            : null,
+          height: formData.dimensions.height
+            ? parseFloat(formData.dimensions.height)
+            : null,
         },
       };
-      
+
       let response;
       if (isEditing) {
         response = await productsAPI.updateProduct(productId, submitData);
       } else {
         response = await productsAPI.createProduct(submitData);
       }
-      
+
       if (response.success) {
         Alert.alert(
           t('common.success'),
-          isEditing ? t('merchant.productUpdated') : t('merchant.productCreated'),
+          isEditing
+            ? t('merchant.productUpdated')
+            : t('merchant.productCreated'),
           [
             {
               text: t('common.ok'),
               onPress: () => navigation.goBack(),
             },
-          ]
+          ],
         );
       } else {
-        Alert.alert(t('common.error'), response.message || t('merchant.errorSavingProduct'));
+        Alert.alert(
+          t('common.error'),
+          response.message || t('merchant.errorSavingProduct'),
+        );
       }
     } catch (error) {
       console.error('Error saving product:', error);
@@ -210,7 +241,7 @@ export default function CreateProductScreen() {
   };
 
   const handleImageSelect = (images) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       images: images,
       primaryImage: images[0] || null,
@@ -219,7 +250,7 @@ export default function CreateProductScreen() {
 
   const addTag = () => {
     if (newTag.trim() && !formData.tags.includes(newTag.trim())) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         tags: [...prev.tags, newTag.trim()],
       }));
@@ -228,15 +259,15 @@ export default function CreateProductScreen() {
   };
 
   const removeTag = (tagToRemove) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      tags: prev.tags.filter(tag => tag !== tagToRemove),
+      tags: prev.tags.filter((tag) => tag !== tagToRemove),
     }));
   };
 
   const addSpecification = () => {
     if (newSpec.name.trim() && newSpec.value.trim()) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         specifications: [...prev.specifications, { ...newSpec }],
       }));
@@ -245,7 +276,7 @@ export default function CreateProductScreen() {
   };
 
   const removeSpecification = (index) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       specifications: prev.specifications.filter((_, i) => i !== index),
     }));
@@ -254,11 +285,13 @@ export default function CreateProductScreen() {
   const renderBasicInfo = () => (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>{t('merchant.basicInformation')}</Text>
-      
+
       <TextInput
         label={t('merchant.productName')}
         value={formData.name}
-        onChangeText={(text) => setFormData(prev => ({ ...prev, name: text }))}
+        onChangeText={(text) =>
+          setFormData((prev) => ({ ...prev, name: text }))
+        }
         style={styles.input}
         error={!!errors.name}
         mode="outlined"
@@ -266,11 +299,13 @@ export default function CreateProductScreen() {
       <HelperText type="error" visible={!!errors.name}>
         {errors.name}
       </HelperText>
-      
+
       <TextInput
         label={t('merchant.description')}
         value={formData.description}
-        onChangeText={(text) => setFormData(prev => ({ ...prev, description: text }))}
+        onChangeText={(text) =>
+          setFormData((prev) => ({ ...prev, description: text }))
+        }
         style={styles.input}
         error={!!errors.description}
         mode="outlined"
@@ -280,15 +315,17 @@ export default function CreateProductScreen() {
       <HelperText type="error" visible={!!errors.description}>
         {errors.description}
       </HelperText>
-      
+
       <Text style={styles.label}>{t('merchant.store')}</Text>
       <View style={styles.storeContainer}>
-        {stores.map(store => (
+        {stores.map((store) => (
           <Chip
             key={store._id}
             mode={formData.storeId === store._id ? 'flat' : 'outlined'}
             selected={formData.storeId === store._id}
-            onPress={() => setFormData(prev => ({ ...prev, storeId: store._id }))}
+            onPress={() =>
+              setFormData((prev) => ({ ...prev, storeId: store._id }))
+            }
             style={styles.storeChip}
           >
             {store.name}
@@ -298,15 +335,17 @@ export default function CreateProductScreen() {
       <HelperText type="error" visible={!!errors.storeId}>
         {errors.storeId}
       </HelperText>
-      
+
       <Text style={styles.label}>{t('merchant.category')}</Text>
       <View style={styles.categoryContainer}>
-        {categories.map(category => (
+        {categories.map((category) => (
           <Chip
             key={category._id}
             mode={formData.category === category._id ? 'flat' : 'outlined'}
             selected={formData.category === category._id}
-            onPress={() => setFormData(prev => ({ ...prev, category: category._id }))}
+            onPress={() =>
+              setFormData((prev) => ({ ...prev, category: category._id }))
+            }
             style={styles.categoryChip}
           >
             {category.name}
@@ -322,12 +361,14 @@ export default function CreateProductScreen() {
   const renderPricing = () => (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>{t('merchant.pricingInventory')}</Text>
-      
+
       <View style={styles.row}>
         <TextInput
           label={t('merchant.price')}
           value={formData.price}
-          onChangeText={(text) => setFormData(prev => ({ ...prev, price: text }))}
+          onChangeText={(text) =>
+            setFormData((prev) => ({ ...prev, price: text }))
+          }
           style={[styles.input, styles.halfWidth]}
           error={!!errors.price}
           mode="outlined"
@@ -337,7 +378,9 @@ export default function CreateProductScreen() {
         <TextInput
           label={t('merchant.originalPrice')}
           value={formData.originalPrice}
-          onChangeText={(text) => setFormData(prev => ({ ...prev, originalPrice: text }))}
+          onChangeText={(text) =>
+            setFormData((prev) => ({ ...prev, originalPrice: text }))
+          }
           style={[styles.input, styles.halfWidth]}
           error={!!errors.originalPrice}
           mode="outlined"
@@ -345,12 +388,14 @@ export default function CreateProductScreen() {
           right={<TextInput.Affix text={t('currency.afn')} />}
         />
       </View>
-      
+
       <View style={styles.row}>
         <TextInput
           label={t('merchant.stock')}
           value={formData.stock}
-          onChangeText={(text) => setFormData(prev => ({ ...prev, stock: text }))}
+          onChangeText={(text) =>
+            setFormData((prev) => ({ ...prev, stock: text }))
+          }
           style={[styles.input, styles.halfWidth]}
           error={!!errors.stock}
           mode="outlined"
@@ -359,25 +404,31 @@ export default function CreateProductScreen() {
         <TextInput
           label={t('merchant.sku')}
           value={formData.sku}
-          onChangeText={(text) => setFormData(prev => ({ ...prev, sku: text }))}
+          onChangeText={(text) =>
+            setFormData((prev) => ({ ...prev, sku: text }))
+          }
           style={[styles.input, styles.halfWidth]}
           mode="outlined"
         />
       </View>
-      
+
       <View style={styles.switchRow}>
         <Text style={styles.switchLabel}>{t('merchant.isActive')}</Text>
         <Switch
           value={formData.isActive}
-          onValueChange={(value) => setFormData(prev => ({ ...prev, isActive: value }))}
+          onValueChange={(value) =>
+            setFormData((prev) => ({ ...prev, isActive: value }))
+          }
         />
       </View>
-      
+
       <View style={styles.switchRow}>
         <Text style={styles.switchLabel}>{t('merchant.isFeatured')}</Text>
         <Switch
           value={formData.isFeatured}
-          onValueChange={(value) => setFormData(prev => ({ ...prev, isFeatured: value }))}
+          onValueChange={(value) =>
+            setFormData((prev) => ({ ...prev, isFeatured: value }))
+          }
         />
       </View>
     </View>
@@ -386,27 +437,31 @@ export default function CreateProductScreen() {
   const renderDetails = () => (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>{t('merchant.productDetails')}</Text>
-      
+
       <TextInput
         label={t('merchant.weight')}
         value={formData.weight}
-        onChangeText={(text) => setFormData(prev => ({ ...prev, weight: text }))}
+        onChangeText={(text) =>
+          setFormData((prev) => ({ ...prev, weight: text }))
+        }
         style={styles.input}
         error={!!errors.weight}
         mode="outlined"
         keyboardType="numeric"
         right={<TextInput.Affix text="kg" />}
       />
-      
+
       <Text style={styles.label}>{t('merchant.dimensions')}</Text>
       <View style={styles.dimensionsRow}>
         <TextInput
           label={t('merchant.length')}
           value={formData.dimensions.length}
-          onChangeText={(text) => setFormData(prev => ({ 
-            ...prev, 
-            dimensions: { ...prev.dimensions, length: text } 
-          }))}
+          onChangeText={(text) =>
+            setFormData((prev) => ({
+              ...prev,
+              dimensions: { ...prev.dimensions, length: text },
+            }))
+          }
           style={[styles.input, styles.dimensionInput]}
           mode="outlined"
           keyboardType="numeric"
@@ -415,10 +470,12 @@ export default function CreateProductScreen() {
         <TextInput
           label={t('merchant.width')}
           value={formData.dimensions.width}
-          onChangeText={(text) => setFormData(prev => ({ 
-            ...prev, 
-            dimensions: { ...prev.dimensions, width: text } 
-          }))}
+          onChangeText={(text) =>
+            setFormData((prev) => ({
+              ...prev,
+              dimensions: { ...prev.dimensions, width: text },
+            }))
+          }
           style={[styles.input, styles.dimensionInput]}
           mode="outlined"
           keyboardType="numeric"
@@ -427,17 +484,19 @@ export default function CreateProductScreen() {
         <TextInput
           label={t('merchant.height')}
           value={formData.dimensions.height}
-          onChangeText={(text) => setFormData(prev => ({ 
-            ...prev, 
-            dimensions: { ...prev.dimensions, height: text } 
-          }))}
+          onChangeText={(text) =>
+            setFormData((prev) => ({
+              ...prev,
+              dimensions: { ...prev.dimensions, height: text },
+            }))
+          }
           style={[styles.input, styles.dimensionInput]}
           mode="outlined"
           keyboardType="numeric"
           right={<TextInput.Affix text="cm" />}
         />
       </View>
-      
+
       {/* Tags */}
       <Text style={styles.label}>{t('merchant.tags')}</Text>
       <View style={styles.tagInputRow}>
@@ -449,15 +508,11 @@ export default function CreateProductScreen() {
           mode="outlined"
           onSubmitEditing={addTag}
         />
-        <Button
-          mode="outlined"
-          onPress={addTag}
-          style={styles.addTagButton}
-        >
+        <Button mode="outlined" onPress={addTag} style={styles.addTagButton}>
           {t('common.add')}
         </Button>
       </View>
-      
+
       <View style={styles.tagContainer}>
         {formData.tags.map((tag, index) => (
           <Chip
@@ -470,21 +525,25 @@ export default function CreateProductScreen() {
           </Chip>
         ))}
       </View>
-      
+
       {/* Specifications */}
       <Text style={styles.label}>{t('merchant.specifications')}</Text>
       <View style={styles.specInputRow}>
         <TextInput
           label={t('merchant.specName')}
           value={newSpec.name}
-          onChangeText={(text) => setNewSpec(prev => ({ ...prev, name: text }))}
+          onChangeText={(text) =>
+            setNewSpec((prev) => ({ ...prev, name: text }))
+          }
           style={[styles.input, styles.specInput]}
           mode="outlined"
         />
         <TextInput
           label={t('merchant.specValue')}
           value={newSpec.value}
-          onChangeText={(text) => setNewSpec(prev => ({ ...prev, value: text }))}
+          onChangeText={(text) =>
+            setNewSpec((prev) => ({ ...prev, value: text }))
+          }
           style={[styles.input, styles.specInput]}
           mode="outlined"
         />
@@ -496,7 +555,7 @@ export default function CreateProductScreen() {
           {t('common.add')}
         </Button>
       </View>
-      
+
       {formData.specifications.map((spec, index) => (
         <Card key={index} style={styles.specCard}>
           <Card.Content style={styles.specContent}>
@@ -578,7 +637,10 @@ export default function CreateProductScreen() {
       </View>
 
       {/* Content */}
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+      >
         {renderTabContent()}
       </ScrollView>
 
@@ -591,7 +653,9 @@ export default function CreateProductScreen() {
           disabled={loading}
           style={styles.submitButton}
         >
-          {isEditing ? t('merchant.updateProduct') : t('merchant.createProduct')}
+          {isEditing
+            ? t('merchant.updateProduct')
+            : t('merchant.createProduct')}
         </Button>
       </View>
     </KeyboardAvoidingView>

@@ -9,7 +9,15 @@ import {
   Alert,
   RefreshControl,
 } from 'react-native';
-import { Card, Button, IconButton, Chip, FAB, Menu, Divider } from 'react-native-paper';
+import {
+  Card,
+  Button,
+  IconButton,
+  Chip,
+  FAB,
+  Menu,
+  Divider,
+} from 'react-native-paper';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { theme } from '../../theme/theme';
@@ -21,7 +29,7 @@ export default function ManageStoresScreen() {
   const navigation = useNavigation();
   const { t, formatDate } = useLanguage();
   const { user } = useAuth();
-  
+
   const [stores, setStores] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -30,17 +38,17 @@ export default function ManageStoresScreen() {
   useFocusEffect(
     React.useCallback(() => {
       loadStores();
-    }, [])
+    }, []),
   );
 
   const loadStores = async () => {
     try {
       setLoading(true);
-      const response = await storesAPI.getStores({ 
+      const response = await storesAPI.getStores({
         owner: user._id,
         populate: 'products',
       });
-      
+
       if (response.success) {
         setStores(response.data);
       }
@@ -82,7 +90,7 @@ export default function ManageStoresScreen() {
           onPress: async () => {
             try {
               await storesAPI.deleteStore(storeId);
-              setStores(stores.filter(store => store._id !== storeId));
+              setStores(stores.filter((store) => store._id !== storeId));
               Alert.alert(t('common.success'), t('merchant.storeDeleted'));
             } catch (error) {
               console.error('Error deleting store:', error);
@@ -90,7 +98,7 @@ export default function ManageStoresScreen() {
             }
           },
         },
-      ]
+      ],
     );
   };
 
@@ -99,13 +107,15 @@ export default function ManageStoresScreen() {
       const response = await storesAPI.updateStore(storeId, {
         isActive: !currentStatus,
       });
-      
+
       if (response.success) {
-        setStores(stores.map(store => 
-          store._id === storeId 
-            ? { ...store, isActive: !currentStatus }
-            : store
-        ));
+        setStores(
+          stores.map((store) =>
+            store._id === storeId
+              ? { ...store, isActive: !currentStatus }
+              : store,
+          ),
+        );
       }
     } catch (error) {
       console.error('Error updating store status:', error);
@@ -114,7 +124,7 @@ export default function ManageStoresScreen() {
   };
 
   const toggleMenu = (storeId) => {
-    setMenuVisible(prev => ({
+    setMenuVisible((prev) => ({
       ...prev,
       [storeId]: !prev[storeId],
     }));
@@ -122,10 +132,14 @@ export default function ManageStoresScreen() {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'active': return theme.colors.primary;
-      case 'inactive': return theme.colors.error;
-      case 'pending': return theme.colors.accent;
-      default: return theme.colors.placeholder;
+      case 'active':
+        return theme.colors.primary;
+      case 'inactive':
+        return theme.colors.error;
+      case 'pending':
+        return theme.colors.accent;
+      default:
+        return theme.colors.placeholder;
     }
   };
 
@@ -170,7 +184,7 @@ export default function ManageStoresScreen() {
               </View>
             </View>
           </View>
-          
+
           <Menu
             visible={menuVisible[item._id]}
             onDismiss={() => toggleMenu(item._id)}
@@ -203,7 +217,11 @@ export default function ManageStoresScreen() {
                 toggleMenu(item._id);
                 handleToggleStoreStatus(item._id, item.isActive);
               }}
-              title={item.isActive ? t('merchant.deactivate') : t('merchant.activate')}
+              title={
+                item.isActive
+                  ? t('merchant.deactivate')
+                  : t('merchant.activate')
+              }
               leadingIcon={item.isActive ? 'pause' : 'play'}
             />
             <Divider />
@@ -218,26 +236,42 @@ export default function ManageStoresScreen() {
             />
           </Menu>
         </View>
-        
+
         <View style={styles.storeFooter}>
           <View style={styles.storeLocation}>
-            <Ionicons name="location" size={14} color={theme.colors.placeholder} />
+            <Ionicons
+              name="location"
+              size={14}
+              color={theme.colors.placeholder}
+            />
             <Text style={styles.locationText}>
               {item.address?.city}, {item.address?.province}
             </Text>
           </View>
-          
+
           <View style={styles.storeStatus}>
             <Chip
               mode="flat"
-              style={[styles.statusChip, { backgroundColor: getStatusColor(item.isActive ? 'active' : 'inactive') + '20' }]}
-              textStyle={[styles.statusChipText, { color: getStatusColor(item.isActive ? 'active' : 'inactive') }]}
+              style={[
+                styles.statusChip,
+                {
+                  backgroundColor:
+                    getStatusColor(item.isActive ? 'active' : 'inactive') +
+                    '20',
+                },
+              ]}
+              textStyle={[
+                styles.statusChipText,
+                {
+                  color: getStatusColor(item.isActive ? 'active' : 'inactive'),
+                },
+              ]}
             >
               {getStatusText(item.isActive)}
             </Chip>
           </View>
         </View>
-        
+
         <View style={styles.storeActions}>
           <Button
             mode="outlined"
@@ -287,11 +321,7 @@ export default function ManageStoresScreen() {
           <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>{t('merchant.manageStores')}</Text>
-        <IconButton
-          icon="refresh"
-          size={24}
-          onPress={handleRefresh}
-        />
+        <IconButton icon="refresh" size={24} onPress={handleRefresh} />
       </View>
 
       {/* Store List */}
@@ -303,7 +333,9 @@ export default function ManageStoresScreen() {
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }
         ListEmptyComponent={!loading ? renderEmpty : null}
-        contentContainerStyle={stores.length === 0 ? styles.emptyList : styles.listContainer}
+        contentContainerStyle={
+          stores.length === 0 ? styles.emptyList : styles.listContainer
+        }
         showsVerticalScrollIndicator={false}
       />
 

@@ -22,7 +22,7 @@ export default function StoreListScreen() {
   const route = useRoute();
   const { t } = useLanguage();
   const { user } = useAuth();
-  
+
   const [stores, setStores] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -55,7 +55,7 @@ export default function StoreListScreen() {
       }
 
       const response = await storesAPI.getStores(params);
-      
+
       if (response.success) {
         const newStores = response.data;
         setStores(reset ? newStores : [...stores, ...newStores]);
@@ -109,7 +109,11 @@ export default function StoreListScreen() {
           {item.description}
         </Text>
         <View style={styles.storeLocation}>
-          <Ionicons name="location" size={16} color={theme.colors.placeholder} />
+          <Ionicons
+            name="location"
+            size={16}
+            color={theme.colors.placeholder}
+          />
           <Text style={styles.locationText}>
             {item.address}, {item.city}
           </Text>
@@ -120,9 +124,7 @@ export default function StoreListScreen() {
             <Text style={styles.ratingText}>
               {item.rating?.average?.toFixed(1) || 'N/A'}
             </Text>
-            <Text style={styles.reviewCount}>
-              ({item.rating?.count || 0})
-            </Text>
+            <Text style={styles.reviewCount}>({item.rating?.count || 0})</Text>
           </View>
           <View style={styles.storeContact}>
             {item.phone && (

@@ -24,9 +24,8 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuthState = async () => {
     try {
-      const storedToken = await getItem('token');
-      const storedUser = await getItem('user');
-      
+      const storedToken = await AsyncStorage.getItem('token');
+      const storedUser = await AsyncStorage.getItem('user');
       if (storedToken && storedUser) {
         setToken(storedToken);
         setUser(JSON.parse(storedUser));
@@ -41,24 +40,23 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       setIsLoading(true);
-      
+
       const response = await authAPI.login(email, password);
-      
+
       if (response.success) {
         const { token: newToken, user: newUser } = response;
-        
-        await setItem('token', newToken);
-        await setItem('user', JSON.stringify(newUser));
+        await AsyncStorage.setItem('token', newToken);
+        await AsyncStorage.setItem('user', JSON.stringify(newUser));
         
         setToken(newToken);
         setUser(newUser);
-        
+
         showMessage({
           message: 'Login Successful',
           description: 'Welcome back!',
           type: 'success',
         });
-        
+
         return { success: true };
       } else {
         showMessage({
@@ -84,24 +82,24 @@ export const AuthProvider = ({ children }) => {
   const register = async (userData) => {
     try {
       setIsLoading(true);
-      
+
       const response = await authAPI.register(userData);
-      
+
       if (response.success) {
         const { token: newToken, user: newUser } = response;
-        
-        await setItem('token', newToken);
-        await setItem('user', JSON.stringify(newUser));
-        
+
+        await AsyncStorage.setItem('token', newToken);
+        await AsyncStorage.setItem('user', JSON.stringify(newUser));
+
         setToken(newToken);
         setUser(newUser);
-        
+
         showMessage({
           message: 'Registration Successful',
           description: 'Welcome to Afghanistan Marketplace!',
           type: 'success',
         });
-        
+
         return { success: true };
       } else {
         showMessage({
@@ -127,18 +125,18 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       setIsLoading(true);
-      
+
       // Call logout API if needed
       if (token) {
         await authAPI.logout();
       }
       
-      await removeItem('token');
-      await removeItem('user');
-      
+      await AsyncStorage.removeItem('token');
+      await AsyncStorage.removeItem('user');
+
       setToken(null);
       setUser(null);
-      
+
       showMessage({
         message: 'Logged Out',
         description: 'See you again soon!',
@@ -154,21 +152,20 @@ export const AuthProvider = ({ children }) => {
   const updateProfile = async (profileData) => {
     try {
       setIsLoading(true);
-      
+
       const response = await authAPI.updateProfile(profileData);
-      
+
       if (response.success) {
         const updatedUser = response.user;
-        
-        await setItem('user', JSON.stringify(updatedUser));
+        await AsyncStorage.setItem('user', JSON.stringify(updatedUser));
         setUser(updatedUser);
-        
+
         showMessage({
           message: 'Profile Updated',
           description: 'Your profile has been updated successfully.',
           type: 'success',
         });
-        
+
         return { success: true };
       } else {
         showMessage({
@@ -202,9 +199,5 @@ export const AuthProvider = ({ children }) => {
     checkAuthState,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

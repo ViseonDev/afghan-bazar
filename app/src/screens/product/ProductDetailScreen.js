@@ -11,7 +11,14 @@ import {
   Linking,
   Alert,
 } from 'react-native';
-import { Button, Card, Chip, FAB, ActivityIndicator, IconButton } from 'react-native-paper';
+import {
+  Button,
+  Card,
+  Chip,
+  FAB,
+  ActivityIndicator,
+  IconButton,
+} from 'react-native-paper';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { theme } from '../../theme/theme';
@@ -26,7 +33,7 @@ export default function ProductDetailScreen() {
   const route = useRoute();
   const { t } = useLanguage();
   const { user } = useAuth();
-  
+
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isFavorite, setIsFavorite] = useState(false);
@@ -43,7 +50,7 @@ export default function ProductDetailScreen() {
     try {
       setLoading(true);
       const response = await productsAPI.getProduct(route.params.id);
-      
+
       if (response.success) {
         setProduct(response.data);
       }
@@ -58,7 +65,10 @@ export default function ProductDetailScreen() {
 
   const checkFavoriteStatus = async () => {
     try {
-      const response = await favoritesAPI.checkFavorite('product', route.params.id);
+      const response = await favoritesAPI.checkFavorite(
+        'product',
+        route.params.id,
+      );
       if (response.success) {
         setIsFavorite(response.isFavorite);
       }
@@ -104,7 +114,7 @@ export default function ProductDetailScreen() {
 
   const handleWhatsApp = (phoneNumber) => {
     const url = `whatsapp://send?phone=${phoneNumber}&text=${encodeURIComponent(
-      `Hi, I'm interested in your product: ${product.name}`
+      `Hi, I'm interested in your product: ${product.name}`,
     )}`;
     Linking.openURL(url);
   };
@@ -115,30 +125,26 @@ export default function ProductDetailScreen() {
       return;
     }
 
-    Alert.alert(
-      t('products.reportProduct'),
-      t('common.reportConfirm'),
-      [
-        { text: t('common.cancel'), style: 'cancel' },
-        {
-          text: t('common.confirm'),
-          onPress: async () => {
-            try {
-              await flagsAPI.createFlag({
-                targetType: 'product',
-                targetId: product._id,
-                reason: 'inappropriate_content',
-                description: 'Reported from product detail screen',
-              });
-              Alert.alert(t('common.success'), t('common.reportSubmitted'));
-            } catch (error) {
-              console.error('Error reporting product:', error);
-              Alert.alert(t('common.error'), t('errors.reportFailed'));
-            }
-          },
+    Alert.alert(t('products.reportProduct'), t('common.reportConfirm'), [
+      { text: t('common.cancel'), style: 'cancel' },
+      {
+        text: t('common.confirm'),
+        onPress: async () => {
+          try {
+            await flagsAPI.createFlag({
+              targetType: 'product',
+              targetId: product._id,
+              reason: 'inappropriate_content',
+              description: 'Reported from product detail screen',
+            });
+            Alert.alert(t('common.success'), t('common.reportSubmitted'));
+          } catch (error) {
+            console.error('Error reporting product:', error);
+            Alert.alert(t('common.error'), t('errors.reportFailed'));
+          }
         },
-      ]
-    );
+      },
+    ]);
   };
 
   const handleChat = () => {
@@ -147,7 +153,7 @@ export default function ProductDetailScreen() {
       return;
     }
 
-    navigation.navigate('Chat', { 
+    navigation.navigate('Chat', {
       storeId: product.storeId._id,
       storeName: product.storeId.name,
     });
@@ -165,9 +171,7 @@ export default function ProductDetailScreen() {
     return (
       <View style={styles.errorContainer}>
         <Text style={styles.errorText}>{t('products.productNotFound')}</Text>
-        <Button onPress={() => navigation.goBack()}>
-          {t('common.back')}
-        </Button>
+        <Button onPress={() => navigation.goBack()}>{t('common.back')}</Button>
       </View>
     );
   }
@@ -185,26 +189,21 @@ export default function ProductDetailScreen() {
           <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
         </TouchableOpacity>
         <View style={styles.headerActions}>
+          <IconButton icon="share" size={24} onPress={handleShare} />
           <IconButton
-            icon="share"
-            size={24}
-            onPress={handleShare}
-          />
-          <IconButton
-            icon={isFavorite ? "heart" : "heart-outline"}
+            icon={isFavorite ? 'heart' : 'heart-outline'}
             size={24}
             iconColor={isFavorite ? theme.colors.error : theme.colors.text}
             onPress={toggleFavorite}
           />
-          <IconButton
-            icon="flag"
-            size={24}
-            onPress={handleReport}
-          />
+          <IconButton icon="flag" size={24} onPress={handleReport} />
         </View>
       </View>
 
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+      >
         {/* Image Gallery */}
         <View style={styles.imageContainer}>
           <ScrollView
@@ -212,7 +211,9 @@ export default function ProductDetailScreen() {
             pagingEnabled
             showsHorizontalScrollIndicator={false}
             onMomentumScrollEnd={(event) => {
-              const index = Math.floor(event.nativeEvent.contentOffset.x / width);
+              const index = Math.floor(
+                event.nativeEvent.contentOffset.x / width,
+              );
               setCurrentImageIndex(index);
             }}
           >
@@ -225,7 +226,7 @@ export default function ProductDetailScreen() {
               />
             ))}
           </ScrollView>
-          
+
           {images.length > 1 && (
             <View style={styles.imageIndicator}>
               {images.map((_, index) => (
@@ -245,7 +246,7 @@ export default function ProductDetailScreen() {
         <Card style={styles.infoCard}>
           <Card.Content>
             <Text style={styles.productName}>{product.name}</Text>
-            
+
             <View style={styles.priceContainer}>
               {product.price && (
                 <Text style={styles.productPrice}>
@@ -275,7 +276,11 @@ export default function ProductDetailScreen() {
                 {product.category}
               </Chip>
               {product.subcategory && (
-                <Chip icon="tag-outline" mode="outlined" style={styles.categoryChip}>
+                <Chip
+                  icon="tag-outline"
+                  mode="outlined"
+                  style={styles.categoryChip}
+                >
                   {product.subcategory}
                 </Chip>
               )}
@@ -283,32 +288,51 @@ export default function ProductDetailScreen() {
 
             <View style={styles.availabilityContainer}>
               <Ionicons
-                name={product.stock?.available ? "checkmark-circle" : "close-circle"}
+                name={
+                  product.stock?.available ? 'checkmark-circle' : 'close-circle'
+                }
                 size={20}
-                color={product.stock?.available ? theme.colors.success : theme.colors.error}
+                color={
+                  product.stock?.available
+                    ? theme.colors.success
+                    : theme.colors.error
+                }
               />
-              <Text style={[
-                styles.availabilityText,
-                { color: product.stock?.available ? theme.colors.success : theme.colors.error }
-              ]}>
-                {product.stock?.available ? t('products.availability') : t('products.unavailable')}
+              <Text
+                style={[
+                  styles.availabilityText,
+                  {
+                    color: product.stock?.available
+                      ? theme.colors.success
+                      : theme.colors.error,
+                  },
+                ]}
+              >
+                {product.stock?.available
+                  ? t('products.availability')
+                  : t('products.unavailable')}
               </Text>
             </View>
 
             <Text style={styles.description}>{product.description}</Text>
 
             {/* Specifications */}
-            {product.specifications && Object.keys(product.specifications).length > 0 && (
-              <View style={styles.specificationsContainer}>
-                <Text style={styles.sectionTitle}>{t('products.specifications')}</Text>
-                {Object.entries(product.specifications).map(([key, value]) => (
-                  <View key={key} style={styles.specItem}>
-                    <Text style={styles.specKey}>{key}:</Text>
-                    <Text style={styles.specValue}>{value}</Text>
-                  </View>
-                ))}
-              </View>
-            )}
+            {product.specifications &&
+              Object.keys(product.specifications).length > 0 && (
+                <View style={styles.specificationsContainer}>
+                  <Text style={styles.sectionTitle}>
+                    {t('products.specifications')}
+                  </Text>
+                  {Object.entries(product.specifications).map(
+                    ([key, value]) => (
+                      <View key={key} style={styles.specItem}>
+                        <Text style={styles.specKey}>{key}:</Text>
+                        <Text style={styles.specValue}>{value}</Text>
+                      </View>
+                    ),
+                  )}
+                </View>
+              )}
           </Card.Content>
         </Card>
 
@@ -317,7 +341,9 @@ export default function ProductDetailScreen() {
           <Card.Content>
             <TouchableOpacity
               style={styles.storeHeader}
-              onPress={() => navigation.navigate('StoreDetail', { id: product.storeId._id })}
+              onPress={() =>
+                navigation.navigate('StoreDetail', { id: product.storeId._id })
+              }
             >
               <View style={styles.storeInfo}>
                 <Text style={styles.storeName}>{product.storeId.name}</Text>
@@ -325,7 +351,11 @@ export default function ProductDetailScreen() {
                   {product.storeId.address}, {product.storeId.city}
                 </Text>
               </View>
-              <Ionicons name="chevron-forward" size={20} color={theme.colors.placeholder} />
+              <Ionicons
+                name="chevron-forward"
+                size={20}
+                color={theme.colors.placeholder}
+              />
             </TouchableOpacity>
 
             <View style={styles.contactButtons}>
@@ -339,7 +369,7 @@ export default function ProductDetailScreen() {
                   {t('common.call')}
                 </Button>
               )}
-              
+
               {product.storeId.whatsapp && (
                 <Button
                   mode="outlined"
@@ -350,7 +380,7 @@ export default function ProductDetailScreen() {
                   WhatsApp
                 </Button>
               )}
-              
+
               {user && (
                 <Button
                   mode="contained"

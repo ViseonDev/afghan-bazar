@@ -9,7 +9,14 @@ import {
   Alert,
   Dimensions,
 } from 'react-native';
-import { Card, Button, IconButton, Chip, FAB, ProgressBar } from 'react-native-paper';
+import {
+  Card,
+  Button,
+  IconButton,
+  Chip,
+  FAB,
+  ProgressBar,
+} from 'react-native-paper';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { LineChart, BarChart, PieChart } from 'react-native-chart-kit';
@@ -24,7 +31,7 @@ export default function MerchantDashboardScreen() {
   const navigation = useNavigation();
   const { t, formatDate } = useLanguage();
   const { user } = useAuth();
-  
+
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -33,18 +40,18 @@ export default function MerchantDashboardScreen() {
   useFocusEffect(
     React.useCallback(() => {
       loadDashboardData();
-    }, [selectedPeriod])
+    }, [selectedPeriod]),
   );
 
   const loadDashboardData = async () => {
     try {
       setLoading(true);
-      
+
       // Load merchant dashboard data
       const response = await usersAPI.getMerchantDashboard({
         period: selectedPeriod,
       });
-      
+
       if (response.success) {
         setDashboardData(response.data);
       }
@@ -114,12 +121,14 @@ export default function MerchantDashboardScreen() {
     if (!dashboardData?.analytics?.salesData) return null;
 
     const chartData = {
-      labels: dashboardData.analytics.salesData.map(item => item.date),
-      datasets: [{
-        data: dashboardData.analytics.salesData.map(item => item.sales),
-        color: (opacity = 1) => `rgba(${theme.colors.primary}, ${opacity})`,
-        strokeWidth: 2,
-      }],
+      labels: dashboardData.analytics.salesData.map((item) => item.date),
+      datasets: [
+        {
+          data: dashboardData.analytics.salesData.map((item) => item.sales),
+          color: (opacity = 1) => `rgba(${theme.colors.primary}, ${opacity})`,
+          strokeWidth: 2,
+        },
+      ],
     };
 
     return (
@@ -136,7 +145,8 @@ export default function MerchantDashboardScreen() {
             backgroundGradientTo: theme.colors.surface,
             decimalPlaces: 0,
             color: (opacity = 1) => `rgba(${theme.colors.primary}, ${opacity})`,
-            labelColor: (opacity = 1) => `rgba(${theme.colors.text}, ${opacity})`,
+            labelColor: (opacity = 1) =>
+              `rgba(${theme.colors.text}, ${opacity})`,
             style: {
               borderRadius: 16,
             },
@@ -172,11 +182,7 @@ export default function MerchantDashboardScreen() {
           <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>{t('merchant.dashboard')}</Text>
-        <IconButton
-          icon="refresh"
-          size={24}
-          onPress={handleRefresh}
-        />
+        <IconButton icon="refresh" size={24} onPress={handleRefresh} />
       </View>
 
       <ScrollView
@@ -200,7 +206,7 @@ export default function MerchantDashboardScreen() {
 
         {/* Period Filter */}
         <View style={styles.periodFilter}>
-          {['week', 'month', 'year'].map(period => (
+          {['week', 'month', 'year'].map((period) => (
             <Chip
               key={period}
               mode={selectedPeriod === period ? 'flat' : 'outlined'}
@@ -250,7 +256,9 @@ export default function MerchantDashboardScreen() {
         {/* Quick Actions */}
         <Card style={styles.quickActionsCard}>
           <Card.Content>
-            <Text style={styles.sectionTitle}>{t('merchant.quickActions')}</Text>
+            <Text style={styles.sectionTitle}>
+              {t('merchant.quickActions')}
+            </Text>
             <View style={styles.quickActionsGrid}>
               <QuickAction
                 title={t('merchant.createStore')}
@@ -284,7 +292,9 @@ export default function MerchantDashboardScreen() {
         {dashboardData?.analytics && (
           <Card style={styles.chartCard}>
             <Card.Content>
-              <Text style={styles.sectionTitle}>{t('merchant.performanceChart')}</Text>
+              <Text style={styles.sectionTitle}>
+                {t('merchant.performanceChart')}
+              </Text>
               {renderChart()}
             </Card.Content>
           </Card>
@@ -294,18 +304,28 @@ export default function MerchantDashboardScreen() {
         {dashboardData?.recentActivity && (
           <Card style={styles.activityCard}>
             <Card.Content>
-              <Text style={styles.sectionTitle}>{t('merchant.recentActivity')}</Text>
+              <Text style={styles.sectionTitle}>
+                {t('merchant.recentActivity')}
+              </Text>
               {dashboardData.recentActivity.map((activity, index) => (
                 <View key={index} style={styles.activityItem}>
                   <View style={styles.activityIcon}>
-                    <Ionicons 
-                      name={activity.type === 'view' ? 'eye' : activity.type === 'message' ? 'chatbubble' : 'person'} 
-                      size={16} 
-                      color={theme.colors.primary} 
+                    <Ionicons
+                      name={
+                        activity.type === 'view'
+                          ? 'eye'
+                          : activity.type === 'message'
+                            ? 'chatbubble'
+                            : 'person'
+                      }
+                      size={16}
+                      color={theme.colors.primary}
                     />
                   </View>
                   <View style={styles.activityContent}>
-                    <Text style={styles.activityText}>{activity.description}</Text>
+                    <Text style={styles.activityText}>
+                      {activity.description}
+                    </Text>
                     <Text style={styles.activityTime}>
                       {formatDate(activity.timestamp, 'short')}
                     </Text>
@@ -319,24 +339,20 @@ export default function MerchantDashboardScreen() {
         {/* Business Tips */}
         <Card style={styles.tipsCard}>
           <Card.Content>
-            <Text style={styles.sectionTitle}>{t('merchant.businessTips')}</Text>
+            <Text style={styles.sectionTitle}>
+              {t('merchant.businessTips')}
+            </Text>
             <View style={styles.tipItem}>
               <Ionicons name="bulb" size={20} color={theme.colors.accent} />
-              <Text style={styles.tipText}>
-                {t('merchant.tip1')}
-              </Text>
+              <Text style={styles.tipText}>{t('merchant.tip1')}</Text>
             </View>
             <View style={styles.tipItem}>
               <Ionicons name="bulb" size={20} color={theme.colors.accent} />
-              <Text style={styles.tipText}>
-                {t('merchant.tip2')}
-              </Text>
+              <Text style={styles.tipText}>{t('merchant.tip2')}</Text>
             </View>
             <View style={styles.tipItem}>
               <Ionicons name="bulb" size={20} color={theme.colors.accent} />
-              <Text style={styles.tipText}>
-                {t('merchant.tip3')}
-              </Text>
+              <Text style={styles.tipText}>{t('merchant.tip3')}</Text>
             </View>
           </Card.Content>
         </Card>
@@ -354,7 +370,7 @@ export default function MerchantDashboardScreen() {
               { text: t('common.cancel'), style: 'cancel' },
               { text: t('merchant.createStore'), onPress: handleCreateStore },
               { text: t('merchant.addProduct'), onPress: handleCreateProduct },
-            ]
+            ],
           );
         }}
       />
