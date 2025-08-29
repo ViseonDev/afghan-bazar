@@ -33,6 +33,11 @@ import ManageProductsScreen from './src/screens/merchant/ManageProductsScreen';
 import CreateStoreScreen from './src/screens/merchant/CreateStoreScreen';
 import CreateProductScreen from './src/screens/merchant/CreateProductScreen';
 import AdminDashboardScreen from './src/screens/admin/AdminDashboardScreen';
+import UserManagementScreen from './src/screens/admin/UserManagementScreen';
+import ContentModerationScreen from './src/screens/admin/ContentModerationScreen';
+import SystemSettingsScreen from './src/screens/admin/SystemSettingsScreen';
+import ReportsScreen from './src/screens/admin/ReportsScreen';
+import FlaggedContentScreen from './src/screens/admin/FlaggedContentScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
 
 // Navigation
@@ -105,8 +110,15 @@ function AppContent() {
                 <Stack.Screen name="EditProduct" component={CreateProductScreen} />
               </>
             )}
-            {user.role === 'admin' && (
-              <Stack.Screen name="AdminDashboard" component={AdminDashboardScreen} />
+            {(user.role === 'admin' || user.role === 'moderator') && (
+              <>
+                <Stack.Screen name="AdminDashboard" component={AdminDashboardScreen} />
+                <Stack.Screen name="UserManagement" component={UserManagementScreen} />
+                <Stack.Screen name="ContentModeration" component={ContentModerationScreen} />
+                <Stack.Screen name="SystemSettings" component={SystemSettingsScreen} />
+                <Stack.Screen name="Reports" component={ReportsScreen} />
+                <Stack.Screen name="FlaggedContent" component={FlaggedContentScreen} />
+              </>
             )}
           </>
         ) : (
