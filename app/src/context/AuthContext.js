@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getItem, setItem, removeItem } from '../services/storage';
 import { showMessage } from 'react-native-flash-message';
 import { authAPI } from '../services/api';
 
@@ -26,7 +26,6 @@ export const AuthProvider = ({ children }) => {
     try {
       const storedToken = await AsyncStorage.getItem('token');
       const storedUser = await AsyncStorage.getItem('user');
-
       if (storedToken && storedUser) {
         setToken(storedToken);
         setUser(JSON.parse(storedUser));
@@ -46,10 +45,9 @@ export const AuthProvider = ({ children }) => {
 
       if (response.success) {
         const { token: newToken, user: newUser } = response;
-
         await AsyncStorage.setItem('token', newToken);
         await AsyncStorage.setItem('user', JSON.stringify(newUser));
-
+        
         setToken(newToken);
         setUser(newUser);
 
@@ -132,7 +130,7 @@ export const AuthProvider = ({ children }) => {
       if (token) {
         await authAPI.logout();
       }
-
+      
       await AsyncStorage.removeItem('token');
       await AsyncStorage.removeItem('user');
 
@@ -159,7 +157,6 @@ export const AuthProvider = ({ children }) => {
 
       if (response.success) {
         const updatedUser = response.user;
-
         await AsyncStorage.setItem('user', JSON.stringify(updatedUser));
         setUser(updatedUser);
 

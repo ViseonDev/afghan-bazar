@@ -1,5 +1,5 @@
 import io from 'socket.io-client';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getItem } from './storage';
 
 class SocketService {
   constructor() {
