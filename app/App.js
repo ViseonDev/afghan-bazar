@@ -4,7 +4,6 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Provider as PaperProvider } from 'react-native-paper';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import FlashMessage from 'react-native-flash-message';
 import * as SplashScreen from 'expo-splash-screen';
 import * as Font from 'expo-font';
