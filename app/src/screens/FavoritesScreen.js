@@ -22,7 +22,7 @@ export default function FavoritesScreen() {
   const navigation = useNavigation();
   const { t } = useLanguage();
   const { user } = useAuth();
-  
+
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -33,20 +33,20 @@ export default function FavoritesScreen() {
       if (user) {
         loadFavorites();
       }
-    }, [user, selectedTab])
+    }, [user, selectedTab]),
   );
 
   const loadFavorites = async () => {
     try {
       setLoading(true);
-      
+
       const params = {};
       if (selectedTab !== 'all') {
         params.targetType = selectedTab;
       }
-      
+
       const response = await favoritesAPI.getFavorites(params);
-      
+
       if (response.success) {
         setFavorites(response.data);
       }
@@ -74,14 +74,14 @@ export default function FavoritesScreen() {
           onPress: async () => {
             try {
               await favoritesAPI.removeFromFavorites(favoriteId);
-              setFavorites(favorites.filter(fav => fav._id !== favoriteId));
+              setFavorites(favorites.filter((fav) => fav._id !== favoriteId));
             } catch (error) {
               console.error('Error removing favorite:', error);
               Alert.alert(t('common.error'), t('favorites.errorRemoving'));
             }
           },
         },
-      ]
+      ],
     );
   };
 
@@ -98,7 +98,7 @@ export default function FavoritesScreen() {
     if (!target) return null;
 
     const isProduct = item.targetType === 'product';
-    const imageSource = isProduct 
+    const imageSource = isProduct
       ? target.primaryImage || target.images?.[0]
       : target.coverImage || target.images?.[0];
 
@@ -112,7 +112,7 @@ export default function FavoritesScreen() {
           style={styles.itemImage}
           defaultSource={require('../../assets/placeholder.png')}
         />
-        
+
         <View style={styles.itemInfo}>
           <View style={styles.itemHeader}>
             <Text style={styles.itemName} numberOfLines={2}>
@@ -120,16 +120,18 @@ export default function FavoritesScreen() {
             </Text>
             <TouchableOpacity
               style={styles.removeButton}
-              onPress={() => handleRemoveFavorite(item._id, item.targetType, target.name)}
+              onPress={() =>
+                handleRemoveFavorite(item._id, item.targetType, target.name)
+              }
             >
               <Ionicons name="heart" size={20} color={theme.colors.error} />
             </TouchableOpacity>
           </View>
-          
+
           <Text style={styles.itemDescription} numberOfLines={2}>
             {target.description}
           </Text>
-          
+
           <View style={styles.itemFooter}>
             <Chip
               icon={isProduct ? 'package' : 'storefront'}
@@ -139,28 +141,24 @@ export default function FavoritesScreen() {
             >
               {isProduct ? t('navigation.products') : t('navigation.stores')}
             </Chip>
-            
+
             <View style={styles.itemDetails}>
               {isProduct && target.price && (
                 <Text style={styles.itemPrice}>
                   {target.price} {t('currency.afn')}
                 </Text>
               )}
-              
+
               {isProduct && target.storeId && (
-                <Text style={styles.itemStore}>
-                  {target.storeId.name}
-                </Text>
+                <Text style={styles.itemStore}>{target.storeId.name}</Text>
               )}
-              
+
               {!isProduct && target.city && (
-                <Text style={styles.itemLocation}>
-                  {target.city}
-                </Text>
+                <Text style={styles.itemLocation}>{target.city}</Text>
               )}
             </View>
           </View>
-          
+
           <View style={styles.rating}>
             <Ionicons name="star" size={14} color="#FFD700" />
             <Text style={styles.ratingText}>
@@ -174,13 +172,17 @@ export default function FavoritesScreen() {
 
   const renderEmpty = () => (
     <View style={styles.emptyContainer}>
-      <Ionicons name="heart-outline" size={64} color={theme.colors.placeholder} />
+      <Ionicons
+        name="heart-outline"
+        size={64}
+        color={theme.colors.placeholder}
+      />
       <Text style={styles.emptyText}>{t('favorites.noFavorites')}</Text>
       <Text style={styles.emptySubtext}>{t('favorites.addSomeFavorites')}</Text>
     </View>
   );
 
-  const filteredFavorites = favorites.filter(item => {
+  const filteredFavorites = favorites.filter((item) => {
     if (selectedTab === 'all') return true;
     return item.targetType === selectedTab;
   });
@@ -188,7 +190,11 @@ export default function FavoritesScreen() {
   if (!user) {
     return (
       <View style={styles.authContainer}>
-        <Ionicons name="person-outline" size={64} color={theme.colors.placeholder} />
+        <Ionicons
+          name="person-outline"
+          size={64}
+          color={theme.colors.placeholder}
+        />
         <Text style={styles.authText}>{t('auth.loginRequired')}</Text>
         <TouchableOpacity
           style={styles.loginButton}
@@ -243,7 +249,9 @@ export default function FavoritesScreen() {
         }
         ListEmptyComponent={!loading ? renderEmpty : null}
         contentContainerStyle={
-          filteredFavorites.length === 0 ? styles.emptyList : styles.listContainer
+          filteredFavorites.length === 0
+            ? styles.emptyList
+            : styles.listContainer
         }
         showsVerticalScrollIndicator={false}
       />

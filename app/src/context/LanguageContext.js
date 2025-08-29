@@ -56,7 +56,7 @@ export const LanguageProvider = ({ children }) => {
       if (!['en', 'fa', 'ps'].includes(language)) {
         throw new Error('Invalid language code');
       }
-      
+
       await AsyncStorage.setItem('language', language);
       setCurrentLanguage(language);
     } catch (error) {
@@ -96,7 +96,7 @@ export const LanguageProvider = ({ children }) => {
 
   const formatCurrency = (amount, currency = 'AFN') => {
     const formattedAmount = formatNumber(amount);
-    
+
     if (currency === 'AFN') {
       return `${formattedAmount} ${t('currency.afn')}`;
     } else if (currency === 'USD') {
@@ -104,23 +104,28 @@ export const LanguageProvider = ({ children }) => {
     } else if (currency === 'EUR') {
       return `€${formattedAmount}`;
     }
-    
+
     return `${formattedAmount} ${currency}`;
   };
 
   const formatDate = (date, format = 'short') => {
     const dateObj = new Date(date);
-    
+
     if (format === 'short') {
-      return dateObj.toLocaleDateString(currentLanguage === 'en' ? 'en-US' : 'fa-IR');
+      return dateObj.toLocaleDateString(
+        currentLanguage === 'en' ? 'en-US' : 'fa-IR',
+      );
     } else if (format === 'long') {
-      return dateObj.toLocaleDateString(currentLanguage === 'en' ? 'en-US' : 'fa-IR', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      });
+      return dateObj.toLocaleDateString(
+        currentLanguage === 'en' ? 'en-US' : 'fa-IR',
+        {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        },
+      );
     }
-    
+
     return dateObj.toLocaleDateString();
   };
 

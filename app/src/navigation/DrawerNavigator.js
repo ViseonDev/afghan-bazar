@@ -2,7 +2,14 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { DrawerContentScrollView, DrawerItem } from '@react-navigation/drawer';
-import { Avatar, Title, Caption, Drawer, Switch, Divider } from 'react-native-paper';
+import {
+  Avatar,
+  Title,
+  Caption,
+  Drawer,
+  Switch,
+  Divider,
+} from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 import { theme } from '../theme/theme';
 import { useLanguage } from '../context/LanguageContext';
@@ -32,7 +39,9 @@ function CustomDrawerContent(props) {
             />
             <View style={styles.userDetails}>
               <Title style={styles.title}>{user?.name || 'Guest'}</Title>
-              <Caption style={styles.caption}>{user?.email || 'Welcome'}</Caption>
+              <Caption style={styles.caption}>
+                {user?.email || 'Welcome'}
+              </Caption>
               <Caption style={styles.caption}>
                 {user?.role === 'merchant' && t('merchant.dashboard')}
                 {user?.role === 'admin' && t('admin.dashboard')}
@@ -51,7 +60,7 @@ function CustomDrawerContent(props) {
             label={t('navigation.home')}
             onPress={() => props.navigation.navigate('Tabs')}
           />
-          
+
           {user && (
             <DrawerItem
               icon={({ color, size }) => (
@@ -103,10 +112,14 @@ function CustomDrawerContent(props) {
               // Handle help navigation
             }}
           />
-          
+
           <DrawerItem
             icon={({ color, size }) => (
-              <Ionicons name="information-circle-outline" color={color} size={size} />
+              <Ionicons
+                name="information-circle-outline"
+                color={color}
+                size={size}
+              />
             )}
             label={t('profile.about')}
             onPress={() => {
@@ -152,7 +165,7 @@ export default function DrawerNavigator() {
           title: t('navigation.home'),
         }}
       />
-      
+
       {user && (
         <DrawerNav.Screen
           name="History"

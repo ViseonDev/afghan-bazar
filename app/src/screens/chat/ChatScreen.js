@@ -9,7 +9,12 @@ import {
   Alert,
 } from 'react-native';
 import { TextInput, IconButton, ActivityIndicator } from 'react-native-paper';
-import { GiftedChat, Bubble, Send, InputToolbar } from 'react-native-gifted-chat';
+import {
+  GiftedChat,
+  Bubble,
+  Send,
+  InputToolbar,
+} from 'react-native-gifted-chat';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { theme } from '../../theme/theme';
@@ -23,9 +28,9 @@ export default function ChatScreen() {
   const route = useRoute();
   const { t } = useLanguage();
   const { user } = useAuth();
-  
+
   const { storeId, storeName } = route.params;
-  
+
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [typing, setTyping] = useState(false);
@@ -34,7 +39,7 @@ export default function ChatScreen() {
   useEffect(() => {
     loadMessages();
     setupSocketListeners();
-    
+
     return () => {
       // Leave chat room when component unmounts
       socketService.leaveChat(storeId);
@@ -46,10 +51,10 @@ export default function ChatScreen() {
     try {
       setLoading(true);
       const response = await chatAPI.getMessages(storeId, { limit: 50 });
-      
+
       if (response.success) {
         // Transform messages for GiftedChat format
-        const transformedMessages = response.data.map(msg => ({
+        const transformedMessages = response.data.map((msg) => ({
           _id: msg._id,
           text: msg.message,
           createdAt: new Date(msg.timestamp),
@@ -62,7 +67,7 @@ export default function ChatScreen() {
           received: msg.isDelivered,
           pending: false,
         }));
-        
+
         setMessages(transformedMessages);
       }
     } catch (error) {
@@ -103,8 +108,8 @@ export default function ChatScreen() {
         pending: false,
       };
 
-      setMessages(previousMessages => 
-        GiftedChat.append(previousMessages, [newMessage])
+      setMessages((previousMessages) =>
+        GiftedChat.append(previousMessages, [newMessage]),
       );
 
       // Mark message as read if it's not from current user
@@ -124,11 +129,11 @@ export default function ChatScreen() {
 
   const onSend = async (newMessages = []) => {
     const message = newMessages[0];
-    
+
     try {
       // Optimistically add message to UI
-      setMessages(previousMessages => 
-        GiftedChat.append(previousMessages, newMessages)
+      setMessages((previousMessages) =>
+        GiftedChat.append(previousMessages, newMessages),
       );
 
       // Send message via API
@@ -142,16 +147,16 @@ export default function ChatScreen() {
         socketService.sendMessage(storeId, message.text);
       } else {
         // Remove message from UI if send failed
-        setMessages(previousMessages => 
-          previousMessages.filter(msg => msg._id !== message._id)
+        setMessages((previousMessages) =>
+          previousMessages.filter((msg) => msg._id !== message._id),
         );
         Alert.alert(t('common.error'), t('chat.errorSendingMessage'));
       }
     } catch (error) {
       console.error('Error sending message:', error);
       // Remove message from UI if send failed
-      setMessages(previousMessages => 
-        previousMessages.filter(msg => msg._id !== message._id)
+      setMessages((previousMessages) =>
+        previousMessages.filter((msg) => msg._id !== message._id),
       );
       Alert.alert(t('common.error'), t('chat.errorSendingMessage'));
     }
@@ -232,7 +237,7 @@ export default function ChatScreen() {
         >
           <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
         </TouchableOpacity>
-        
+
         <View style={styles.headerInfo}>
           <Text style={styles.storeName}>{storeName}</Text>
           <Text style={styles.onlineStatus}>
@@ -244,7 +249,11 @@ export default function ChatScreen() {
           style={styles.headerButton}
           onPress={() => navigation.navigate('StoreDetail', { id: storeId })}
         >
-          <Ionicons name="information-circle" size={24} color={theme.colors.text} />
+          <Ionicons
+            name="information-circle"
+            size={24}
+            color={theme.colors.text}
+          />
         </TouchableOpacity>
       </View>
 
@@ -269,7 +278,11 @@ export default function ChatScreen() {
           placeholder={t('chat.typeMessage')}
           scrollToBottom
           scrollToBottomComponent={() => (
-            <Ionicons name="chevron-down" size={24} color={theme.colors.primary} />
+            <Ionicons
+              name="chevron-down"
+              size={24}
+              color={theme.colors.primary}
+            />
           )}
           infiniteScroll
           alwaysShowSend

@@ -14,7 +14,7 @@ export default function SplashScreen() {
         <Text style={styles.title}>Afghanistan Marketplace</Text>
         <Text style={styles.subtitle}>د افغانستان بازار</Text>
       </View>
-      
+
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color={theme.colors.primary} />
         <Text style={styles.loadingText}>Loading...</Text>

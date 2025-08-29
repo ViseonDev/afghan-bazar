@@ -22,7 +22,7 @@ export default function ConversationsScreen() {
   const navigation = useNavigation();
   const { t, formatDate } = useLanguage();
   const { user } = useAuth();
-  
+
   const [conversations, setConversations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -34,19 +34,19 @@ export default function ConversationsScreen() {
         loadConversations();
         setupSocketListeners();
       }
-      
+
       return () => {
         // Cleanup socket listeners when screen loses focus
         socketService.off('new-message', handleNewMessage);
       };
-    }, [user])
+    }, [user]),
   );
 
   const loadConversations = async () => {
     try {
       setLoading(true);
       const response = await chatAPI.getConversations();
-      
+
       if (response.success) {
         setConversations(response.data);
       }
@@ -70,10 +70,10 @@ export default function ConversationsScreen() {
 
   const handleNewMessage = (message) => {
     // Update the conversations list with the new message
-    setConversations(prevConversations => {
+    setConversations((prevConversations) => {
       const updatedConversations = [...prevConversations];
       const conversationIndex = updatedConversations.findIndex(
-        conv => conv._id === message.storeId
+        (conv) => conv._id === message.storeId,
       );
 
       if (conversationIndex !== -1) {
@@ -83,13 +83,17 @@ export default function ConversationsScreen() {
           lastMessage: message.message,
           lastTimestamp: message.timestamp,
           lastSenderId: message.senderId,
-          unreadCount: message.recipientId === user._id 
-            ? updatedConversations[conversationIndex].unreadCount + 1 
-            : updatedConversations[conversationIndex].unreadCount,
+          unreadCount:
+            message.recipientId === user._id
+              ? updatedConversations[conversationIndex].unreadCount + 1
+              : updatedConversations[conversationIndex].unreadCount,
         };
-        
+
         // Move to top
-        const updatedConversation = updatedConversations.splice(conversationIndex, 1)[0];
+        const updatedConversation = updatedConversations.splice(
+          conversationIndex,
+          1,
+        )[0];
         updatedConversations.unshift(updatedConversation);
       }
 
@@ -109,8 +113,8 @@ export default function ConversationsScreen() {
     });
   };
 
-  const filteredConversations = conversations.filter(conversation =>
-    conversation.store.name.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredConversations = conversations.filter((conversation) =>
+    conversation.store.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const ConversationItem = ({ item }) => {
@@ -130,35 +134,33 @@ export default function ConversationsScreen() {
           style={styles.storeImage}
           defaultSource={require('../../../assets/placeholder.png')}
         />
-        
+
         <View style={styles.conversationInfo}>
           <View style={styles.conversationHeader}>
-            <Text style={[
-              styles.storeName,
-              hasUnreadMessages && styles.unreadText,
-            ]}>
+            <Text
+              style={[styles.storeName, hasUnreadMessages && styles.unreadText]}
+            >
               {item.store.name}
             </Text>
             <Text style={styles.timestamp}>
               {formatDate(item.lastTimestamp, 'short')}
             </Text>
           </View>
-          
+
           <View style={styles.messagePreview}>
-            <Text style={[
-              styles.lastMessage,
-              hasUnreadMessages && styles.unreadText,
-            ]} numberOfLines={1}>
+            <Text
+              style={[
+                styles.lastMessage,
+                hasUnreadMessages && styles.unreadText,
+              ]}
+              numberOfLines={1}
+            >
               {isFromCurrentUser ? `${t('common.you')}: ` : ''}
               {item.lastMessage}
             </Text>
-            
+
             {hasUnreadMessages && (
-              <Badge
-                visible={true}
-                style={styles.unreadBadge}
-                size={20}
-              >
+              <Badge visible={true} style={styles.unreadBadge} size={20}>
                 {item.unreadCount}
               </Badge>
             )}

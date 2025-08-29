@@ -4,27 +4,27 @@ export const theme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-    primary: '#2E7D32',      // Green
-    accent: '#FF6F00',       // Orange
-    background: '#F5F5F5',   // Light gray
-    surface: '#FFFFFF',      // White
-    text: '#212121',         // Dark gray
-    placeholder: '#757575',  // Medium gray
+    primary: '#2E7D32', // Green
+    accent: '#FF6F00', // Orange
+    background: '#F5F5F5', // Light gray
+    surface: '#FFFFFF', // White
+    text: '#212121', // Dark gray
+    placeholder: '#757575', // Medium gray
     backdrop: 'rgba(0,0,0,0.5)',
     onSurface: '#212121',
     notification: '#FF5722', // Red orange
-    
+
     // Custom colors
     success: '#4CAF50',
     warning: '#FF9800',
     error: '#F44336',
     info: '#2196F3',
-    
+
     // Afghanistan flag colors
     afghanGreen: '#00A651',
     afghanRed: '#FF0000',
     afghanBlack: '#000000',
-    
+
     // Neutral colors
     neutral: {
       50: '#FAFAFA',
@@ -38,14 +38,14 @@ export const theme = {
       800: '#424242',
       900: '#212121',
     },
-    
+
     // Semantic colors
     border: '#E0E0E0',
     divider: '#BDBDBD',
     disabled: '#F5F5F5',
     disabledText: '#9E9E9E',
   },
-  
+
   // Typography
   fonts: {
     ...DefaultTheme.fonts,
@@ -66,7 +66,7 @@ export const theme = {
       fontWeight: '100',
     },
   },
-  
+
   // Spacing
   spacing: {
     xs: 4,
@@ -76,10 +76,10 @@ export const theme = {
     xl: 32,
     xxl: 48,
   },
-  
+
   // Border radius
   roundness: 8,
-  
+
   // Shadows
   shadows: {
     small: {
@@ -113,7 +113,7 @@ export const theme = {
       elevation: 8,
     },
   },
-  
+
   // Component specific styles
   components: {
     card: {
@@ -123,7 +123,7 @@ export const theme = {
       marginVertical: 8,
       marginHorizontal: 16,
     },
-    
+
     button: {
       primary: {
         backgroundColor: '#2E7D32',
@@ -136,7 +136,7 @@ export const theme = {
         borderWidth: 1,
       },
     },
-    
+
     input: {
       backgroundColor: '#FFFFFF',
       borderColor: '#E0E0E0',

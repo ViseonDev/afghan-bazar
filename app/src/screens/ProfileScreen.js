@@ -7,7 +7,14 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
-import { Avatar, Card, List, Button, Divider, IconButton } from 'react-native-paper';
+import {
+  Avatar,
+  Card,
+  List,
+  Button,
+  Divider,
+  IconButton,
+} from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { theme } from '../theme/theme';
@@ -19,7 +26,7 @@ export default function ProfileScreen() {
   const navigation = useNavigation();
   const { t, formatDate } = useLanguage();
   const { user, logout } = useAuth();
-  
+
   const [profileData, setProfileData] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -33,7 +40,7 @@ export default function ProfileScreen() {
     try {
       setLoading(true);
       const response = await usersAPI.getProfile();
-      
+
       if (response.success) {
         setProfileData(response.data);
       }
@@ -45,17 +52,13 @@ export default function ProfileScreen() {
   };
 
   const handleLogout = () => {
-    Alert.alert(
-      t('common.logout'),
-      t('profile.logoutConfirm'),
-      [
-        { text: t('common.cancel'), style: 'cancel' },
-        {
-          text: t('common.confirm'),
-          onPress: logout,
-        },
-      ]
-    );
+    Alert.alert(t('common.logout'), t('profile.logoutConfirm'), [
+      { text: t('common.cancel'), style: 'cancel' },
+      {
+        text: t('common.confirm'),
+        onPress: logout,
+      },
+    ]);
   };
 
   const getRoleDisplayName = (role) => {
@@ -75,16 +78,25 @@ export default function ProfileScreen() {
 
   const getInitials = (name) => {
     if (!name) return 'U';
-    return name.split(' ').map(word => word[0]).join('').toUpperCase().slice(0, 2);
+    return name
+      .split(' ')
+      .map((word) => word[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
   };
 
   if (!user) {
     return (
       <View style={styles.authContainer}>
-        <Ionicons name="person-outline" size={64} color={theme.colors.placeholder} />
+        <Ionicons
+          name="person-outline"
+          size={64}
+          color={theme.colors.placeholder}
+        />
         <Text style={styles.authText}>{t('auth.welcomeTitle')}</Text>
         <Text style={styles.authSubtext}>{t('auth.loginToAccess')}</Text>
-        
+
         <View style={styles.authButtons}>
           <TouchableOpacity
             style={styles.loginButton}
@@ -92,7 +104,7 @@ export default function ProfileScreen() {
           >
             <Text style={styles.loginButtonText}>{t('auth.login')}</Text>
           </TouchableOpacity>
-          
+
           <TouchableOpacity
             style={styles.registerButton}
             onPress={() => navigation.navigate('Register')}
@@ -124,12 +136,12 @@ export default function ProfileScreen() {
             label={getInitials(user.name)}
             style={styles.avatar}
           />
-          
+
           <View style={styles.profileInfo}>
             <Text style={styles.userName}>{user.name}</Text>
             <Text style={styles.userEmail}>{user.email}</Text>
             <Text style={styles.userRole}>{getRoleDisplayName(user.role)}</Text>
-            
+
             {user.lastLogin && (
               <Text style={styles.lastLogin}>
                 {t('profile.lastLogin')}: {formatDate(user.lastLogin, 'short')}
@@ -151,21 +163,25 @@ export default function ProfileScreen() {
                 </Text>
                 <Text style={styles.statLabel}>{t('profile.viewsCount')}</Text>
               </View>
-              
+
               {user.role === 'merchant' && (
                 <>
                   <View style={styles.statItem}>
                     <Text style={styles.statNumber}>
                       {profileData.stats.storeCount || 0}
                     </Text>
-                    <Text style={styles.statLabel}>{t('merchant.myStores')}</Text>
+                    <Text style={styles.statLabel}>
+                      {t('merchant.myStores')}
+                    </Text>
                   </View>
-                  
+
                   <View style={styles.statItem}>
                     <Text style={styles.statNumber}>
                       {profileData.stats.productCount || 0}
                     </Text>
-                    <Text style={styles.statLabel}>{t('merchant.myProducts')}</Text>
+                    <Text style={styles.statLabel}>
+                      {t('merchant.myProducts')}
+                    </Text>
                   </View>
                 </>
               )}
@@ -184,9 +200,9 @@ export default function ProfileScreen() {
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
             onPress={() => navigation.navigate('Favorites')}
           />
-          
+
           <Divider />
-          
+
           <List.Item
             title={t('navigation.history')}
             description={t('profile.viewHistory')}
@@ -194,9 +210,9 @@ export default function ProfileScreen() {
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
             onPress={() => navigation.navigate('History')}
           />
-          
+
           <Divider />
-          
+
           <List.Item
             title={t('chat.conversations')}
             description={t('profile.myConversations')}
@@ -204,7 +220,7 @@ export default function ProfileScreen() {
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
             onPress={() => navigation.navigate('Chat')}
           />
-          
+
           {user.role === 'merchant' && (
             <>
               <Divider />
@@ -217,7 +233,7 @@ export default function ProfileScreen() {
               />
             </>
           )}
-          
+
           {(user.role === 'admin' || user.role === 'moderator') && (
             <>
               <Divider />
@@ -243,9 +259,9 @@ export default function ProfileScreen() {
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
             onPress={() => navigation.navigate('Settings')}
           />
-          
+
           <Divider />
-          
+
           <List.Item
             title={t('profile.help')}
             description={t('profile.helpSupport')}
@@ -255,9 +271,9 @@ export default function ProfileScreen() {
               // Handle help navigation
             }}
           />
-          
+
           <Divider />
-          
+
           <List.Item
             title={t('profile.about')}
             description={t('profile.aboutApp')}

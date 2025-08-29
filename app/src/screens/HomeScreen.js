@@ -25,7 +25,7 @@ export default function HomeScreen() {
   const navigation = useNavigation();
   const { t } = useLanguage();
   const { user } = useAuth();
-  
+
   const [searchQuery, setSearchQuery] = useState('');
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -40,7 +40,7 @@ export default function HomeScreen() {
   const loadData = async () => {
     try {
       setLoading(true);
-      
+
       const [categoriesRes, productsRes, storesRes] = await Promise.all([
         categoriesAPI.getFeaturedCategories(),
         productsAPI.getProducts({ featured: true, limit: 6 }),
@@ -50,11 +50,11 @@ export default function HomeScreen() {
       if (categoriesRes.success) {
         setCategories(categoriesRes.data);
       }
-      
+
       if (productsRes.success) {
         setFeaturedProducts(productsRes.data);
       }
-      
+
       if (storesRes.success) {
         setFeaturedStores(storesRes.data);
       }
@@ -80,7 +80,9 @@ export default function HomeScreen() {
   const CategoryCard = ({ category }) => (
     <TouchableOpacity
       style={styles.categoryCard}
-      onPress={() => navigation.navigate('ProductList', { category: category.slug })}
+      onPress={() =>
+        navigation.navigate('ProductList', { category: category.slug })
+      }
     >
       <View style={styles.categoryIconContainer}>
         {category.icon ? (
@@ -170,7 +172,9 @@ export default function HomeScreen() {
         {/* Header */}
         <View style={styles.header}>
           <Text style={styles.welcomeText}>
-            {user ? `${t('common.hello')} ${user.name}` : t('auth.welcomeTitle')}
+            {user
+              ? `${t('common.hello')} ${user.name}`
+              : t('auth.welcomeTitle')}
           </Text>
           <TouchableOpacity
             style={styles.authButton}
@@ -201,14 +205,14 @@ export default function HomeScreen() {
         {/* Categories */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>{t('navigation.categories')}</Text>
-            <TouchableOpacity
-              onPress={() => navigation.navigate('Categories')}
-            >
+            <Text style={styles.sectionTitle}>
+              {t('navigation.categories')}
+            </Text>
+            <TouchableOpacity onPress={() => navigation.navigate('Categories')}>
               <Text style={styles.viewAllText}>{t('home.viewAll')}</Text>
             </TouchableOpacity>
           </View>
-          
+
           <FlatList
             data={categories}
             renderItem={({ item }) => <CategoryCard category={item} />}
@@ -222,14 +226,18 @@ export default function HomeScreen() {
         {/* Featured Products */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>{t('home.featuredProducts')}</Text>
+            <Text style={styles.sectionTitle}>
+              {t('home.featuredProducts')}
+            </Text>
             <TouchableOpacity
-              onPress={() => navigation.navigate('ProductList', { featured: true })}
+              onPress={() =>
+                navigation.navigate('ProductList', { featured: true })
+              }
             >
               <Text style={styles.viewAllText}>{t('home.viewAll')}</Text>
             </TouchableOpacity>
           </View>
-          
+
           <FlatList
             data={featuredProducts}
             renderItem={({ item }) => <ProductCard product={item} />}
@@ -245,12 +253,14 @@ export default function HomeScreen() {
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>{t('home.featuredStores')}</Text>
             <TouchableOpacity
-              onPress={() => navigation.navigate('StoreList', { featured: true })}
+              onPress={() =>
+                navigation.navigate('StoreList', { featured: true })
+              }
             >
               <Text style={styles.viewAllText}>{t('home.viewAll')}</Text>
             </TouchableOpacity>
           </View>
-          
+
           <FlatList
             data={featuredStores}
             renderItem={({ item }) => <StoreCard store={item} />}

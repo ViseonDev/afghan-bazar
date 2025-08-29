@@ -11,7 +11,15 @@ import {
   Linking,
   Alert,
 } from 'react-native';
-import { Button, Card, Chip, FAB, ActivityIndicator, IconButton, Divider } from 'react-native-paper';
+import {
+  Button,
+  Card,
+  Chip,
+  FAB,
+  ActivityIndicator,
+  IconButton,
+  Divider,
+} from 'react-native-paper';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { FlatList } from 'react-native-gesture-handler';
@@ -27,7 +35,7 @@ export default function StoreDetailScreen() {
   const route = useRoute();
   const { t } = useLanguage();
   const { user } = useAuth();
-  
+
   const [store, setStore] = useState(null);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -46,7 +54,7 @@ export default function StoreDetailScreen() {
     try {
       setLoading(true);
       const response = await storesAPI.getStore(route.params.id);
-      
+
       if (response.success) {
         setStore(response.data.store);
         setProducts(response.data.products || []);
@@ -63,7 +71,10 @@ export default function StoreDetailScreen() {
 
   const checkFavoriteStatus = async () => {
     try {
-      const response = await favoritesAPI.checkFavorite('store', route.params.id);
+      const response = await favoritesAPI.checkFavorite(
+        'store',
+        route.params.id,
+      );
       if (response.success) {
         setIsFavorite(response.isFavorite);
       }
@@ -109,7 +120,7 @@ export default function StoreDetailScreen() {
 
   const handleWhatsApp = (phoneNumber) => {
     const url = `whatsapp://send?phone=${phoneNumber}&text=${encodeURIComponent(
-      `Hi, I'm interested in your store: ${store.name}`
+      `Hi, I'm interested in your store: ${store.name}`,
     )}`;
     Linking.openURL(url);
   };
@@ -135,30 +146,26 @@ export default function StoreDetailScreen() {
       return;
     }
 
-    Alert.alert(
-      t('stores.reportStore'),
-      t('common.reportConfirm'),
-      [
-        { text: t('common.cancel'), style: 'cancel' },
-        {
-          text: t('common.confirm'),
-          onPress: async () => {
-            try {
-              await flagsAPI.createFlag({
-                targetType: 'store',
-                targetId: store._id,
-                reason: 'inappropriate_content',
-                description: 'Reported from store detail screen',
-              });
-              Alert.alert(t('common.success'), t('common.reportSubmitted'));
-            } catch (error) {
-              console.error('Error reporting store:', error);
-              Alert.alert(t('common.error'), t('errors.reportFailed'));
-            }
-          },
+    Alert.alert(t('stores.reportStore'), t('common.reportConfirm'), [
+      { text: t('common.cancel'), style: 'cancel' },
+      {
+        text: t('common.confirm'),
+        onPress: async () => {
+          try {
+            await flagsAPI.createFlag({
+              targetType: 'store',
+              targetId: store._id,
+              reason: 'inappropriate_content',
+              description: 'Reported from store detail screen',
+            });
+            Alert.alert(t('common.success'), t('common.reportSubmitted'));
+          } catch (error) {
+            console.error('Error reporting store:', error);
+            Alert.alert(t('common.error'), t('errors.reportFailed'));
+          }
         },
-      ]
-    );
+      },
+    ]);
   };
 
   const handleChat = () => {
@@ -167,7 +174,7 @@ export default function StoreDetailScreen() {
       return;
     }
 
-    navigation.navigate('Chat', { 
+    navigation.navigate('Chat', {
       storeId: store._id,
       storeName: store.name,
     });
@@ -175,19 +182,31 @@ export default function StoreDetailScreen() {
 
   const formatBusinessHours = (hours) => {
     if (!hours) return null;
-    
-    const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-    return days.map(day => {
-      const dayHours = hours[day];
-      if (!dayHours || !dayHours.open || !dayHours.close) return null;
-      
-      return (
-        <View key={day} style={styles.businessHourRow}>
-          <Text style={styles.dayText}>{t(`days.${day}`)}</Text>
-          <Text style={styles.hourText}>{dayHours.open} - {dayHours.close}</Text>
-        </View>
-      );
-    }).filter(Boolean);
+
+    const days = [
+      'monday',
+      'tuesday',
+      'wednesday',
+      'thursday',
+      'friday',
+      'saturday',
+      'sunday',
+    ];
+    return days
+      .map((day) => {
+        const dayHours = hours[day];
+        if (!dayHours || !dayHours.open || !dayHours.close) return null;
+
+        return (
+          <View key={day} style={styles.businessHourRow}>
+            <Text style={styles.dayText}>{t(`days.${day}`)}</Text>
+            <Text style={styles.hourText}>
+              {dayHours.open} - {dayHours.close}
+            </Text>
+          </View>
+        );
+      })
+      .filter(Boolean);
   };
 
   const ProductCard = ({ item }) => (
@@ -225,9 +244,7 @@ export default function StoreDetailScreen() {
     return (
       <View style={styles.errorContainer}>
         <Text style={styles.errorText}>{t('stores.storeNotFound')}</Text>
-        <Button onPress={() => navigation.goBack()}>
-          {t('common.back')}
-        </Button>
+        <Button onPress={() => navigation.goBack()}>{t('common.back')}</Button>
       </View>
     );
   }
@@ -245,26 +262,21 @@ export default function StoreDetailScreen() {
           <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
         </TouchableOpacity>
         <View style={styles.headerActions}>
+          <IconButton icon="share" size={24} onPress={handleShare} />
           <IconButton
-            icon="share"
-            size={24}
-            onPress={handleShare}
-          />
-          <IconButton
-            icon={isFavorite ? "heart" : "heart-outline"}
+            icon={isFavorite ? 'heart' : 'heart-outline'}
             size={24}
             iconColor={isFavorite ? theme.colors.error : theme.colors.text}
             onPress={toggleFavorite}
           />
-          <IconButton
-            icon="flag"
-            size={24}
-            onPress={handleReport}
-          />
+          <IconButton icon="flag" size={24} onPress={handleReport} />
         </View>
       </View>
 
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+      >
         {/* Image Gallery */}
         <View style={styles.imageContainer}>
           <ScrollView
@@ -272,7 +284,9 @@ export default function StoreDetailScreen() {
             pagingEnabled
             showsHorizontalScrollIndicator={false}
             onMomentumScrollEnd={(event) => {
-              const index = Math.floor(event.nativeEvent.contentOffset.x / width);
+              const index = Math.floor(
+                event.nativeEvent.contentOffset.x / width,
+              );
               setCurrentImageIndex(index);
             }}
           >
@@ -285,7 +299,7 @@ export default function StoreDetailScreen() {
               />
             ))}
           </ScrollView>
-          
+
           {images.length > 1 && (
             <View style={styles.imageIndicator}>
               {images.map((_, index) => (
@@ -305,7 +319,7 @@ export default function StoreDetailScreen() {
         <Card style={styles.infoCard}>
           <Card.Content>
             <Text style={styles.storeName}>{store.name}</Text>
-            
+
             <View style={styles.ratingContainer}>
               <View style={styles.rating}>
                 <Ionicons name="star" size={16} color="#FFD700" />
@@ -317,7 +331,11 @@ export default function StoreDetailScreen() {
                 </Text>
               </View>
               {store.isFeatured && (
-                <Chip icon="star" mode="outlined" textStyle={styles.featuredChip}>
+                <Chip
+                  icon="star"
+                  mode="outlined"
+                  textStyle={styles.featuredChip}
+                >
                   {t('admin.featured')}
                 </Chip>
               )}
@@ -327,7 +345,11 @@ export default function StoreDetailScreen() {
 
             {/* Location */}
             <View style={styles.locationContainer}>
-              <Ionicons name="location" size={20} color={theme.colors.primary} />
+              <Ionicons
+                name="location"
+                size={20}
+                color={theme.colors.primary}
+              />
               <View style={styles.locationInfo}>
                 <Text style={styles.address}>{store.address}</Text>
                 <Text style={styles.city}>{store.city}</Text>
@@ -346,7 +368,7 @@ export default function StoreDetailScreen() {
                   {t('common.call')}
                 </Button>
               )}
-              
+
               {store.whatsapp && (
                 <Button
                   mode="outlined"
@@ -357,7 +379,7 @@ export default function StoreDetailScreen() {
                   WhatsApp
                 </Button>
               )}
-              
+
               <Button
                 mode="outlined"
                 icon="map"
@@ -385,21 +407,21 @@ export default function StoreDetailScreen() {
         <Card style={styles.contactCard}>
           <Card.Content>
             <Text style={styles.sectionTitle}>{t('stores.contactInfo')}</Text>
-            
+
             {store.phone && (
               <View style={styles.contactItem}>
                 <Ionicons name="call" size={20} color={theme.colors.primary} />
                 <Text style={styles.contactText}>{store.phone}</Text>
               </View>
             )}
-            
+
             {store.whatsapp && (
               <View style={styles.contactItem}>
                 <Ionicons name="logo-whatsapp" size={20} color="#25D366" />
                 <Text style={styles.contactText}>{store.whatsapp}</Text>
               </View>
             )}
-            
+
             {store.email && (
               <TouchableOpacity
                 style={styles.contactItem}
@@ -416,7 +438,9 @@ export default function StoreDetailScreen() {
         {store.businessHours && (
           <Card style={styles.hoursCard}>
             <Card.Content>
-              <Text style={styles.sectionTitle}>{t('stores.businessHours')}</Text>
+              <Text style={styles.sectionTitle}>
+                {t('stores.businessHours')}
+              </Text>
               <View style={styles.businessHours}>
                 {formatBusinessHours(store.businessHours)}
               </View>
@@ -428,14 +452,18 @@ export default function StoreDetailScreen() {
         <Card style={styles.productsCard}>
           <Card.Content>
             <View style={styles.productsHeader}>
-              <Text style={styles.sectionTitle}>{t('stores.storeProducts')}</Text>
+              <Text style={styles.sectionTitle}>
+                {t('stores.storeProducts')}
+              </Text>
               <TouchableOpacity
-                onPress={() => navigation.navigate('ProductList', { storeId: store._id })}
+                onPress={() =>
+                  navigation.navigate('ProductList', { storeId: store._id })
+                }
               >
                 <Text style={styles.viewAllText}>{t('home.viewAll')}</Text>
               </TouchableOpacity>
             </View>
-            
+
             {productsLoading ? (
               <ActivityIndicator size="small" color={theme.colors.primary} />
             ) : (
@@ -447,7 +475,9 @@ export default function StoreDetailScreen() {
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={styles.productsContainer}
                 ListEmptyComponent={
-                  <Text style={styles.noProductsText}>{t('stores.noProducts')}</Text>
+                  <Text style={styles.noProductsText}>
+                    {t('stores.noProducts')}
+                  </Text>
                 }
               />
             )}

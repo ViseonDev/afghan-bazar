@@ -9,7 +9,17 @@ import {
   Alert,
   RefreshControl,
 } from 'react-native';
-import { Card, Button, IconButton, Chip, FAB, Menu, Divider, Searchbar, SegmentedButtons } from 'react-native-paper';
+import {
+  Card,
+  Button,
+  IconButton,
+  Chip,
+  FAB,
+  Menu,
+  Divider,
+  Searchbar,
+  SegmentedButtons,
+} from 'react-native-paper';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { theme } from '../../theme/theme';
@@ -21,7 +31,7 @@ export default function ManageProductsScreen() {
   const navigation = useNavigation();
   const { t, formatDate } = useLanguage();
   const { user } = useAuth();
-  
+
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -32,27 +42,27 @@ export default function ManageProductsScreen() {
   useFocusEffect(
     React.useCallback(() => {
       loadProducts();
-    }, [selectedTab])
+    }, [selectedTab]),
   );
 
   const loadProducts = async () => {
     try {
       setLoading(true);
-      const params = { 
+      const params = {
         populate: 'storeId category',
         search: searchQuery,
       };
-      
+
       if (selectedTab !== 'all') {
         params.isActive = selectedTab === 'active';
       }
-      
+
       const response = await productsAPI.getProducts(params);
-      
+
       if (response.success) {
         // Filter products owned by current user's stores
-        const userProducts = response.data.filter(product => 
-          product.storeId?.owner === user._id
+        const userProducts = response.data.filter(
+          (product) => product.storeId?.owner === user._id,
         );
         setProducts(userProducts);
       }
@@ -102,15 +112,20 @@ export default function ManageProductsScreen() {
           onPress: async () => {
             try {
               await productsAPI.deleteProduct(productId);
-              setProducts(products.filter(product => product._id !== productId));
+              setProducts(
+                products.filter((product) => product._id !== productId),
+              );
               Alert.alert(t('common.success'), t('merchant.productDeleted'));
             } catch (error) {
               console.error('Error deleting product:', error);
-              Alert.alert(t('common.error'), t('merchant.errorDeletingProduct'));
+              Alert.alert(
+                t('common.error'),
+                t('merchant.errorDeletingProduct'),
+              );
             }
           },
         },
-      ]
+      ],
     );
   };
 
@@ -119,13 +134,15 @@ export default function ManageProductsScreen() {
       const response = await productsAPI.updateProduct(productId, {
         isActive: !currentStatus,
       });
-      
+
       if (response.success) {
-        setProducts(products.map(product => 
-          product._id === productId 
-            ? { ...product, isActive: !currentStatus }
-            : product
-        ));
+        setProducts(
+          products.map((product) =>
+            product._id === productId
+              ? { ...product, isActive: !currentStatus }
+              : product,
+          ),
+        );
       }
     } catch (error) {
       console.error('Error updating product status:', error);
@@ -136,7 +153,7 @@ export default function ManageProductsScreen() {
   const handleDuplicateProduct = async (productId) => {
     try {
       const response = await productsAPI.duplicateProduct(productId);
-      
+
       if (response.success) {
         setProducts([response.data, ...products]);
         Alert.alert(t('common.success'), t('merchant.productDuplicated'));
@@ -148,7 +165,7 @@ export default function ManageProductsScreen() {
   };
 
   const toggleMenu = (productId) => {
-    setMenuVisible(prev => ({
+    setMenuVisible((prev) => ({
       ...prev,
       [productId]: !prev[productId],
     }));
@@ -163,14 +180,16 @@ export default function ManageProductsScreen() {
   };
 
   const getStockStatus = (stock) => {
-    if (stock === 0) return { text: t('merchant.outOfStock'), color: theme.colors.error };
-    if (stock < 10) return { text: t('merchant.lowStock'), color: theme.colors.accent };
+    if (stock === 0)
+      return { text: t('merchant.outOfStock'), color: theme.colors.error };
+    if (stock < 10)
+      return { text: t('merchant.lowStock'), color: theme.colors.accent };
     return { text: t('merchant.inStock'), color: theme.colors.primary };
   };
 
   const ProductItem = ({ item }) => {
     const stockStatus = getStockStatus(item.stock);
-    
+
     return (
       <Card style={styles.productItem}>
         <Card.Content>
@@ -190,13 +209,11 @@ export default function ManageProductsScreen() {
                   <Text style={styles.productPrice}>
                     {item.price} {t('currency.afn')}
                   </Text>
-                  <Text style={styles.productStore}>
-                    {item.storeId?.name}
-                  </Text>
+                  <Text style={styles.productStore}>{item.storeId?.name}</Text>
                 </View>
               </View>
             </View>
-            
+
             <Menu
               visible={menuVisible[item._id]}
               onDismiss={() => toggleMenu(item._id)}
@@ -237,7 +254,11 @@ export default function ManageProductsScreen() {
                   toggleMenu(item._id);
                   handleToggleProductStatus(item._id, item.isActive);
                 }}
-                title={item.isActive ? t('merchant.deactivate') : t('merchant.activate')}
+                title={
+                  item.isActive
+                    ? t('merchant.deactivate')
+                    : t('merchant.activate')
+                }
                 leadingIcon={item.isActive ? 'pause' : 'play'}
               />
               <Divider />
@@ -252,10 +273,14 @@ export default function ManageProductsScreen() {
               />
             </Menu>
           </View>
-          
+
           <View style={styles.productStats}>
             <View style={styles.statItem}>
-              <Ionicons name="cube" size={16} color={theme.colors.placeholder} />
+              <Ionicons
+                name="cube"
+                size={16}
+                color={theme.colors.placeholder}
+              />
               <Text style={styles.statText}>
                 {item.stock} {t('merchant.inStock')}
               </Text>
@@ -267,26 +292,39 @@ export default function ManageProductsScreen() {
               </Text>
             </View>
             <View style={styles.statItem}>
-              <Ionicons name="star" size={16} color={theme.colors.placeholder} />
+              <Ionicons
+                name="star"
+                size={16}
+                color={theme.colors.placeholder}
+              />
               <Text style={styles.statText}>
                 {item.rating?.average?.toFixed(1) || 'N/A'}
               </Text>
             </View>
           </View>
-          
+
           <View style={styles.productFooter}>
             <View style={styles.productChips}>
               <Chip
                 mode="flat"
-                style={[styles.statusChip, { backgroundColor: getStatusColor(item.isActive) + '20' }]}
-                textStyle={[styles.statusChipText, { color: getStatusColor(item.isActive) }]}
+                style={[
+                  styles.statusChip,
+                  { backgroundColor: getStatusColor(item.isActive) + '20' },
+                ]}
+                textStyle={[
+                  styles.statusChipText,
+                  { color: getStatusColor(item.isActive) },
+                ]}
                 compact
               >
                 {getStatusText(item.isActive)}
               </Chip>
               <Chip
                 mode="flat"
-                style={[styles.stockChip, { backgroundColor: stockStatus.color + '20' }]}
+                style={[
+                  styles.stockChip,
+                  { backgroundColor: stockStatus.color + '20' },
+                ]}
                 textStyle={[styles.stockChipText, { color: stockStatus.color }]}
                 compact
               >
@@ -294,7 +332,7 @@ export default function ManageProductsScreen() {
               </Chip>
             </View>
           </View>
-          
+
           <View style={styles.productActions}>
             <Button
               mode="outlined"
@@ -334,12 +372,14 @@ export default function ManageProductsScreen() {
     </View>
   );
 
-  const filteredProducts = products.filter(product => {
-    const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         product.description.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesTab = selectedTab === 'all' || 
-                      (selectedTab === 'active' && product.isActive) ||
-                      (selectedTab === 'inactive' && !product.isActive);
+  const filteredProducts = products.filter((product) => {
+    const matchesSearch =
+      product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.description.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesTab =
+      selectedTab === 'all' ||
+      (selectedTab === 'active' && product.isActive) ||
+      (selectedTab === 'inactive' && !product.isActive);
     return matchesSearch && matchesTab;
   });
 
@@ -354,11 +394,7 @@ export default function ManageProductsScreen() {
           <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>{t('merchant.manageProducts')}</Text>
-        <IconButton
-          icon="refresh"
-          size={24}
-          onPress={handleRefresh}
-        />
+        <IconButton icon="refresh" size={24} onPress={handleRefresh} />
       </View>
 
       {/* Search Bar */}
@@ -406,7 +442,11 @@ export default function ManageProductsScreen() {
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }
         ListEmptyComponent={!loading ? renderEmpty : null}
-        contentContainerStyle={filteredProducts.length === 0 ? styles.emptyList : styles.listContainer}
+        contentContainerStyle={
+          filteredProducts.length === 0
+            ? styles.emptyList
+            : styles.listContainer
+        }
         showsVerticalScrollIndicator={false}
       />
 

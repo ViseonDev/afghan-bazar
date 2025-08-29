@@ -9,7 +9,14 @@ import {
   Alert,
   Dimensions,
 } from 'react-native';
-import { Card, Button, IconButton, Chip, SegmentedButtons, DataTable } from 'react-native-paper';
+import {
+  Card,
+  Button,
+  IconButton,
+  Chip,
+  SegmentedButtons,
+  DataTable,
+} from 'react-native-paper';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { LineChart, BarChart, PieChart } from 'react-native-chart-kit';
@@ -24,7 +31,7 @@ export default function AdminDashboardScreen() {
   const navigation = useNavigation();
   const { t, formatDate } = useLanguage();
   const { user } = useAuth();
-  
+
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -34,18 +41,18 @@ export default function AdminDashboardScreen() {
   useFocusEffect(
     React.useCallback(() => {
       loadDashboardData();
-    }, [selectedPeriod])
+    }, [selectedPeriod]),
   );
 
   const loadDashboardData = async () => {
     try {
       setLoading(true);
-      
+
       // Load admin dashboard data
       const response = await usersAPI.getAdminDashboard({
         period: selectedPeriod,
       });
-      
+
       if (response.success) {
         setDashboardData(response.data);
       }
@@ -95,14 +102,20 @@ export default function AdminDashboardScreen() {
           {subtitle && <Text style={styles.statSubtitle}>{subtitle}</Text>}
           {trend && (
             <View style={styles.trendContainer}>
-              <Ionicons 
-                name={trend > 0 ? 'trending-up' : 'trending-down'} 
-                size={16} 
-                color={trend > 0 ? theme.colors.primary : theme.colors.error} 
+              <Ionicons
+                name={trend > 0 ? 'trending-up' : 'trending-down'}
+                size={16}
+                color={trend > 0 ? theme.colors.primary : theme.colors.error}
               />
-              <Text style={[styles.trendText, { 
-                color: trend > 0 ? theme.colors.primary : theme.colors.error 
-              }]}>
+              <Text
+                style={[
+                  styles.trendText,
+                  {
+                    color:
+                      trend > 0 ? theme.colors.primary : theme.colors.error,
+                  },
+                ]}
+              >
                 {Math.abs(trend)}%
               </Text>
             </View>
@@ -207,16 +220,24 @@ export default function AdminDashboardScreen() {
             {dashboardData.recentActivity.map((activity, index) => (
               <View key={index} style={styles.activityItem}>
                 <View style={styles.activityIcon}>
-                  <Ionicons 
-                    name={activity.type === 'user' ? 'person' : 
-                          activity.type === 'store' ? 'storefront' : 
-                          activity.type === 'product' ? 'package' : 'flag'} 
-                    size={16} 
-                    color={theme.colors.primary} 
+                  <Ionicons
+                    name={
+                      activity.type === 'user'
+                        ? 'person'
+                        : activity.type === 'store'
+                          ? 'storefront'
+                          : activity.type === 'product'
+                            ? 'package'
+                            : 'flag'
+                    }
+                    size={16}
+                    color={theme.colors.primary}
                   />
                 </View>
                 <View style={styles.activityContent}>
-                  <Text style={styles.activityText}>{activity.description}</Text>
+                  <Text style={styles.activityText}>
+                    {activity.description}
+                  </Text>
                   <Text style={styles.activityTime}>
                     {formatDate(activity.timestamp, 'short')}
                   </Text>
@@ -237,16 +258,24 @@ export default function AdminDashboardScreen() {
             <Text style={styles.sectionTitle}>{t('admin.platformGrowth')}</Text>
             <LineChart
               data={{
-                labels: dashboardData.analytics.growthData.map(item => item.date),
+                labels: dashboardData.analytics.growthData.map(
+                  (item) => item.date,
+                ),
                 datasets: [
                   {
-                    data: dashboardData.analytics.growthData.map(item => item.users),
-                    color: (opacity = 1) => `rgba(${theme.colors.primary}, ${opacity})`,
+                    data: dashboardData.analytics.growthData.map(
+                      (item) => item.users,
+                    ),
+                    color: (opacity = 1) =>
+                      `rgba(${theme.colors.primary}, ${opacity})`,
                     strokeWidth: 2,
                   },
                   {
-                    data: dashboardData.analytics.growthData.map(item => item.stores),
-                    color: (opacity = 1) => `rgba(${theme.colors.accent}, ${opacity})`,
+                    data: dashboardData.analytics.growthData.map(
+                      (item) => item.stores,
+                    ),
+                    color: (opacity = 1) =>
+                      `rgba(${theme.colors.accent}, ${opacity})`,
                     strokeWidth: 2,
                   },
                 ],
@@ -260,8 +289,10 @@ export default function AdminDashboardScreen() {
                 backgroundGradientFrom: theme.colors.surface,
                 backgroundGradientTo: theme.colors.surface,
                 decimalPlaces: 0,
-                color: (opacity = 1) => `rgba(${theme.colors.primary}, ${opacity})`,
-                labelColor: (opacity = 1) => `rgba(${theme.colors.text}, ${opacity})`,
+                color: (opacity = 1) =>
+                  `rgba(${theme.colors.primary}, ${opacity})`,
+                labelColor: (opacity = 1) =>
+                  `rgba(${theme.colors.text}, ${opacity})`,
                 style: {
                   borderRadius: 16,
                 },
@@ -276,7 +307,9 @@ export default function AdminDashboardScreen() {
       {dashboardData?.analytics?.categoryDistribution && (
         <Card style={styles.chartCard}>
           <Card.Content>
-            <Text style={styles.sectionTitle}>{t('admin.categoryDistribution')}</Text>
+            <Text style={styles.sectionTitle}>
+              {t('admin.categoryDistribution')}
+            </Text>
             <PieChart
               data={dashboardData.analytics.categoryDistribution}
               width={width - 64}
@@ -285,8 +318,10 @@ export default function AdminDashboardScreen() {
                 backgroundColor: theme.colors.surface,
                 backgroundGradientFrom: theme.colors.surface,
                 backgroundGradientTo: theme.colors.surface,
-                color: (opacity = 1) => `rgba(${theme.colors.primary}, ${opacity})`,
-                labelColor: (opacity = 1) => `rgba(${theme.colors.text}, ${opacity})`,
+                color: (opacity = 1) =>
+                  `rgba(${theme.colors.primary}, ${opacity})`,
+                labelColor: (opacity = 1) =>
+                  `rgba(${theme.colors.text}, ${opacity})`,
               }}
               accessor="population"
               backgroundColor="transparent"
@@ -313,10 +348,10 @@ export default function AdminDashboardScreen() {
                 <DataTable.Title>{t('admin.joinDate')}</DataTable.Title>
               </DataTable.Header>
 
-              {dashboardData.users.map((user, index) => (
+              {dashboardData.users.map((u, index) => (
                 <DataTable.Row key={index}>
-                  <DataTable.Cell>{user.name}</DataTable.Cell>
-                  <DataTable.Cell>{user.email}</DataTable.Cell>
+                  <DataTable.Cell>{u.name}</DataTable.Cell>
+                  <DataTable.Cell>{u.email}</DataTable.Cell>
                   <DataTable.Cell>
                     <Chip
                       mode="outlined"
@@ -324,10 +359,12 @@ export default function AdminDashboardScreen() {
                       style={styles.roleChip}
                       textStyle={styles.roleChipText}
                     >
-                      {user.role}
+                      {u.role}
                     </Chip>
                   </DataTable.Cell>
-                  <DataTable.Cell>{formatDate(user.createdAt, 'short')}</DataTable.Cell>
+                  <DataTable.Cell>
+                    {formatDate(u.createdAt, 'short')}
+                  </DataTable.Cell>
                 </DataTable.Row>
               ))}
             </DataTable>
@@ -356,7 +393,9 @@ export default function AdminDashboardScreen() {
                   <DataTable.Cell>{flag.targetType}</DataTable.Cell>
                   <DataTable.Cell>{flag.reason}</DataTable.Cell>
                   <DataTable.Cell>{flag.reporterId.name}</DataTable.Cell>
-                  <DataTable.Cell>{formatDate(flag.createdAt, 'short')}</DataTable.Cell>
+                  <DataTable.Cell>
+                    {formatDate(flag.createdAt, 'short')}
+                  </DataTable.Cell>
                 </DataTable.Row>
               ))}
             </DataTable>
@@ -400,16 +439,12 @@ export default function AdminDashboardScreen() {
           <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>{t('admin.dashboard')}</Text>
-        <IconButton
-          icon="refresh"
-          size={24}
-          onPress={handleRefresh}
-        />
+        <IconButton icon="refresh" size={24} onPress={handleRefresh} />
       </View>
 
       {/* Period Filter */}
       <View style={styles.periodFilter}>
-        {['week', 'month', 'year'].map(period => (
+        {['week', 'month', 'year'].map((period) => (
           <Chip
             key={period}
             mode={selectedPeriod === period ? 'flat' : 'outlined'}

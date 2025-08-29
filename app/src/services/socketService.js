@@ -10,8 +10,9 @@ class SocketService {
   async connect() {
     try {
       const token = await AsyncStorage.getItem('token');
-      const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:4000';
-      
+      const API_URL =
+        process.env.EXPO_PUBLIC_API_URL || 'http://localhost:4000';
+
       if (!token) {
         console.log('No token found, cannot connect to socket');
         return;
@@ -119,7 +120,7 @@ class SocketService {
   // Notify all listeners for an event
   notifyListeners(event, data) {
     if (this.listeners.has(event)) {
-      this.listeners.get(event).forEach(callback => {
+      this.listeners.get(event).forEach((callback) => {
         try {
           callback(data);
         } catch (error) {

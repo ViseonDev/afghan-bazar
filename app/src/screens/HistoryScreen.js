@@ -10,7 +10,13 @@ import {
   RefreshControl,
   Alert,
 } from 'react-native';
-import { Card, Chip, FAB, SegmentedButtons, IconButton } from 'react-native-paper';
+import {
+  Card,
+  Chip,
+  FAB,
+  SegmentedButtons,
+  IconButton,
+} from 'react-native-paper';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { theme } from '../theme/theme';
@@ -22,7 +28,7 @@ export default function HistoryScreen() {
   const navigation = useNavigation();
   const { t, formatDate } = useLanguage();
   const { user } = useAuth();
-  
+
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -33,20 +39,20 @@ export default function HistoryScreen() {
       if (user) {
         loadHistory();
       }
-    }, [user, selectedTab])
+    }, [user, selectedTab]),
   );
 
   const loadHistory = async () => {
     try {
       setLoading(true);
-      
+
       const params = {};
       if (selectedTab !== 'all') {
         params.targetType = selectedTab;
       }
-      
+
       const response = await usersAPI.getHistory(params);
-      
+
       if (response.success) {
         setHistory(response.data);
       }
@@ -64,25 +70,21 @@ export default function HistoryScreen() {
   };
 
   const handleClearHistory = () => {
-    Alert.alert(
-      t('history.clearHistory'),
-      t('history.clearHistoryConfirm'),
-      [
-        { text: t('common.cancel'), style: 'cancel' },
-        {
-          text: t('common.confirm'),
-          onPress: async () => {
-            try {
-              await usersAPI.clearHistory();
-              setHistory([]);
-            } catch (error) {
-              console.error('Error clearing history:', error);
-              Alert.alert(t('common.error'), t('history.errorClearing'));
-            }
-          },
+    Alert.alert(t('history.clearHistory'), t('history.clearHistoryConfirm'), [
+      { text: t('common.cancel'), style: 'cancel' },
+      {
+        text: t('common.confirm'),
+        onPress: async () => {
+          try {
+            await usersAPI.clearHistory();
+            setHistory([]);
+          } catch (error) {
+            console.error('Error clearing history:', error);
+            Alert.alert(t('common.error'), t('history.errorClearing'));
+          }
         },
-      ]
-    );
+      },
+    ]);
   };
 
   const handleItemPress = (item) => {
@@ -98,7 +100,7 @@ export default function HistoryScreen() {
     if (!target) return null;
 
     const isProduct = item.targetType === 'product';
-    const imageSource = isProduct 
+    const imageSource = isProduct
       ? target.primaryImage || target.images?.[0]
       : target.coverImage || target.images?.[0];
 
@@ -112,7 +114,7 @@ export default function HistoryScreen() {
           style={styles.itemImage}
           defaultSource={require('../../assets/placeholder.png')}
         />
-        
+
         <View style={styles.itemInfo}>
           <View style={styles.itemHeader}>
             <Text style={styles.itemName} numberOfLines={2}>
@@ -122,11 +124,11 @@ export default function HistoryScreen() {
               {formatDate(item.viewedAt, 'short')}
             </Text>
           </View>
-          
+
           <Text style={styles.itemDescription} numberOfLines={2}>
             {target.description}
           </Text>
-          
+
           <View style={styles.itemFooter}>
             <Chip
               icon={isProduct ? 'package' : 'storefront'}
@@ -136,28 +138,24 @@ export default function HistoryScreen() {
             >
               {isProduct ? t('navigation.products') : t('navigation.stores')}
             </Chip>
-            
+
             <View style={styles.itemDetails}>
               {isProduct && target.price && (
                 <Text style={styles.itemPrice}>
                   {target.price} {t('currency.afn')}
                 </Text>
               )}
-              
+
               {isProduct && target.storeId && (
-                <Text style={styles.itemStore}>
-                  {target.storeId.name}
-                </Text>
+                <Text style={styles.itemStore}>{target.storeId.name}</Text>
               )}
-              
+
               {!isProduct && target.city && (
-                <Text style={styles.itemLocation}>
-                  {target.city}
-                </Text>
+                <Text style={styles.itemLocation}>{target.city}</Text>
               )}
             </View>
           </View>
-          
+
           <View style={styles.rating}>
             <Ionicons name="star" size={14} color="#FFD700" />
             <Text style={styles.ratingText}>
@@ -171,13 +169,17 @@ export default function HistoryScreen() {
 
   const renderEmpty = () => (
     <View style={styles.emptyContainer}>
-      <Ionicons name="time-outline" size={64} color={theme.colors.placeholder} />
+      <Ionicons
+        name="time-outline"
+        size={64}
+        color={theme.colors.placeholder}
+      />
       <Text style={styles.emptyText}>{t('history.noHistory')}</Text>
       <Text style={styles.emptySubtext}>{t('history.browseToSeeHistory')}</Text>
     </View>
   );
 
-  const filteredHistory = history.filter(item => {
+  const filteredHistory = history.filter((item) => {
     if (selectedTab === 'all') return true;
     return item.targetType === selectedTab;
   });
@@ -185,7 +187,11 @@ export default function HistoryScreen() {
   if (!user) {
     return (
       <View style={styles.authContainer}>
-        <Ionicons name="person-outline" size={64} color={theme.colors.placeholder} />
+        <Ionicons
+          name="person-outline"
+          size={64}
+          color={theme.colors.placeholder}
+        />
         <Text style={styles.authText}>{t('auth.loginRequired')}</Text>
         <TouchableOpacity
           style={styles.loginButton}
