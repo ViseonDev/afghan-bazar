@@ -23,7 +23,7 @@ import { LineChart, BarChart, PieChart } from 'react-native-chart-kit';
 import { theme } from '../../theme/theme';
 import { useLanguage } from '../../context/LanguageContext';
 import { useAuth } from '../../context/AuthContext';
-import { usersAPI, flagsAPI } from '../../services/api';
+import { adminAPI, flagsAPI } from '../../services/api';
 
 const { width } = Dimensions.get('window');
 
@@ -49,7 +49,7 @@ export default function AdminDashboardScreen() {
       setLoading(true);
 
       // Load admin dashboard data
-      const response = await usersAPI.getAdminDashboard({
+      const response = await adminAPI.getDashboard({
         period: selectedPeriod,
       });
 

@@ -4,7 +4,6 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Provider as PaperProvider } from 'react-native-paper';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import FlashMessage from 'react-native-flash-message';
 import * as SplashScreen from 'expo-splash-screen';
 import * as Font from 'expo-font';
@@ -34,6 +33,11 @@ import ManageProductsScreen from './src/screens/merchant/ManageProductsScreen';
 import CreateStoreScreen from './src/screens/merchant/CreateStoreScreen';
 import CreateProductScreen from './src/screens/merchant/CreateProductScreen';
 import AdminDashboardScreen from './src/screens/admin/AdminDashboardScreen';
+import UserManagementScreen from './src/screens/admin/UserManagementScreen';
+import ContentModerationScreen from './src/screens/admin/ContentModerationScreen';
+import SystemSettingsScreen from './src/screens/admin/SystemSettingsScreen';
+import ReportsScreen from './src/screens/admin/ReportsScreen';
+import FlaggedContentScreen from './src/screens/admin/FlaggedContentScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
 
 // Navigation
@@ -127,11 +131,30 @@ function AppContent() {
                 />
               </>
             )}
-            {user.role === 'admin' && (
-              <Stack.Screen
-                name="AdminDashboard"
-                component={AdminDashboardScreen}
-              />
+            {(user.role === 'admin' || user.role === 'moderator') && (
+              <>
+                <Stack.Screen
+                  name="AdminDashboard"
+                  component={AdminDashboardScreen}
+                />
+                <Stack.Screen
+                  name="UserManagement"
+                  component={UserManagementScreen}
+                />
+                <Stack.Screen
+                  name="ContentModeration"
+                  component={ContentModerationScreen}
+                />
+                <Stack.Screen
+                  name="SystemSettings"
+                  component={SystemSettingsScreen}
+                />
+                <Stack.Screen name="Reports" component={ReportsScreen} />
+                <Stack.Screen
+                  name="FlaggedContent"
+                  component={FlaggedContentScreen}
+                />
+              </>
             )}
           </>
         ) : (

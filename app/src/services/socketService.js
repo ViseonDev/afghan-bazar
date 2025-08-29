@@ -1,5 +1,5 @@
 import io from 'socket.io-client';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getItem } from './storage';
 
 class SocketService {
   constructor() {
@@ -9,10 +9,9 @@ class SocketService {
 
   async connect() {
     try {
-      const token = await AsyncStorage.getItem('token');
+      const token = await getItem('token');
       const API_URL =
         process.env.EXPO_PUBLIC_API_URL || 'http://localhost:4000';
-
       if (!token) {
         console.log('No token found, cannot connect to socket');
         return;

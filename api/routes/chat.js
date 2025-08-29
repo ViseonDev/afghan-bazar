@@ -1,15 +1,30 @@
 const express = require('express');
 const ChatMessage = require('../models/ChatMessage');
 const Store = require('../models/Store');
-const { validateMessage, validatePagination } = require('../middleware/validation');
+const { authorize } = require('../middleware/auth');
+const { validateMessage, validatePagination, validateObjectId } = require('../middleware/validation');
+const rateLimit = require('express-rate-limit');
 const logger = require('../utils/logger');
 
 const router = express.Router();
 
+const sendMessageLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 30,
+  message: 'Too many messages sent. Please try again later.',
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 // @route   GET /api/chat/:storeId
 // @desc    Get chat messages for a store
 // @access  Private
-router.get('/:storeId', validatePagination, async (req, res) => {
+router.get(
+  '/:storeId',
+  authorize('shopper', 'merchant', 'moderator', 'admin'),
+  ...validatePagination,
+  ...validateObjectId('storeId'),
+  async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 50;
@@ -77,12 +92,18 @@ router.get('/:storeId', validatePagination, async (req, res) => {
       error: 'Server error while fetching chat messages'
     });
   }
-});
+  }
+);
 
 // @route   POST /api/chat/:storeId
 // @desc    Send a chat message
 // @access  Private
-router.post('/:storeId', validateMessage, async (req, res) => {
+router.post(
+  '/:storeId',
+  authorize('shopper', 'merchant', 'moderator', 'admin'),
+  sendMessageLimiter,
+  ...validateMessage,
+  async (req, res) => {
   try {
     const { message, messageType = 'text', attachments } = req.body;
     
@@ -141,12 +162,13 @@ router.post('/:storeId', validateMessage, async (req, res) => {
       error: 'Server error while sending message'
     });
   }
-});
+  }
+);
 
 // @route   GET /api/chat/conversations
 // @desc    Get all conversations for the current user
 // @access  Private
-router.get('/conversations', async (req, res) => {
+router.get('/conversations', authorize('shopper', 'merchant', 'moderator', 'admin'), async (req, res) => {
   try {
     const userId = req.user._id;
     
@@ -229,7 +251,11 @@ router.get('/conversations', async (req, res) => {
 // @route   PUT /api/chat/:messageId/read
 // @desc    Mark a message as read
 // @access  Private
-router.put('/:messageId/read', async (req, res) => {
+router.put(
+  '/:messageId/read',
+  authorize('shopper', 'merchant', 'moderator', 'admin'),
+  ...validateObjectId('messageId'),
+  async (req, res) => {
   try {
     const message = await ChatMessage.findById(req.params.messageId);
     
@@ -263,12 +289,17 @@ router.put('/:messageId/read', async (req, res) => {
       error: 'Server error while marking message as read'
     });
   }
-});
+  }
+);
 
 // @route   DELETE /api/chat/:messageId
 // @desc    Delete a message
 // @access  Private
-router.delete('/:messageId', async (req, res) => {
+router.delete(
+  '/:messageId',
+  authorize('shopper', 'merchant', 'moderator', 'admin'),
+  ...validateObjectId('messageId'),
+  async (req, res) => {
   try {
     const message = await ChatMessage.findById(req.params.messageId);
     
@@ -302,6 +333,7 @@ router.delete('/:messageId', async (req, res) => {
       error: 'Server error while deleting message'
     });
   }
-});
+  }
+);
 
 module.exports = router;
