@@ -204,7 +204,10 @@
     "totalFavorites": "مجموع علاقه مندی ها",
     "averageRating": "میانگین امتیاز",
     "activeProducts": "محصولات فعال",
-    "recentActivity": "فعالیت اخیر"
+    "recentActivity": "فعالیت اخیر",
+    "useCurrentLocation": "استفاده از موقعیت فعلی",
+    "locationRequired": "موقعیت فروشگاه الزامی است",
+    "locationPermissionDenied": "اجازه دسترسی به موقعیت رد شد"
   },
   "admin": {
     "dashboard": "داشبورد مدیر",

@@ -74,11 +74,13 @@ const storeSchema = new mongoose.Schema({
   },
   coordinates: {
     latitude: {
-      type: Number
+      type: Number,
+      required: true,
     },
     longitude: {
-      type: Number
-    }
+      type: Number,
+      required: true,
+    },
   },
   businessHours: {
     monday: { open: String, close: String },

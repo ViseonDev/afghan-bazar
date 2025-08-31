@@ -130,7 +130,10 @@ router.get('/', validatePagination, optionalAuth, async (req, res) => {
 router.get('/:id', optionalAuth, async (req, res) => {
   try {
     const product = await Product.findById(req.params.id)
-      .populate('storeId', 'name description address city phone whatsapp email images');
+      .populate(
+        'storeId',
+        'name description address city phone whatsapp email images coordinates',
+      );
     
     if (!product || !product.isActive) {
       return res.status(404).json({

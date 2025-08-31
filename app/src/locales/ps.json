@@ -204,7 +204,10 @@
     "totalFavorites": "ټولې غوره توبونه",
     "averageRating": "منځنۍ درجه",
     "activeProducts": "فعاله توکي",
-    "recentActivity": "وروستی فعالیت"
+    "recentActivity": "وروستی فعالیت",
+    "useCurrentLocation": "اوسنی ځای استعمال کړئ",
+    "locationRequired": "د پلورنځي موقعیت اړین دی",
+    "locationPermissionDenied": "د موقعیت اجازه رد شوه"
   },
   "admin": {
     "dashboard": "د اډمین ډاشبورډ",

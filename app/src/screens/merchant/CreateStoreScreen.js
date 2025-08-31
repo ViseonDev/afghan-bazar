@@ -25,6 +25,8 @@ import { useLanguage } from '../../context/LanguageContext';
 import { useAuth } from '../../context/AuthContext';
 import { storesAPI, categoriesAPI } from '../../services/api';
 import ImageUploader from '../../components/ImageUploader';
+import MapView, { Marker } from 'react-native-maps';
+import * as Location from 'expo-location';
 
 export default function CreateStoreScreen() {
   const navigation = useNavigation();
@@ -62,6 +64,7 @@ export default function CreateStoreScreen() {
     coverImage: null,
     images: [],
     isActive: true,
+    coordinates: { latitude: null, longitude: null },
   });
 
   const [errors, setErrors] = useState({});
@@ -93,8 +96,12 @@ export default function CreateStoreScreen() {
 
       if (response.success) {
         setFormData({
-          ...response.data,
-          category: response.data.category?._id || '',
+          ...response.data.store,
+          category: response.data.store.category?._id || '',
+          coordinates: response.data.store.coordinates || {
+            latitude: null,
+            longitude: null,
+          },
         });
       }
     } catch (error) {
@@ -102,6 +109,26 @@ export default function CreateStoreScreen() {
       Alert.alert(t('common.error'), t('merchant.errorLoadingStore'));
     } finally {
       setLoading(false);
+    }
+  };
+
+  const getCurrentLocation = async () => {
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert(t('common.error'), t('merchant.locationPermissionDenied'));
+        return;
+      }
+      const location = await Location.getCurrentPositionAsync({});
+      setFormData((prev) => ({
+        ...prev,
+        coordinates: {
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+        },
+      }));
+    } catch (error) {
+      console.error('Error getting location:', error);
     }
   };
 
@@ -134,6 +161,13 @@ export default function CreateStoreScreen() {
 
     if (!formData.address.province.trim()) {
       newErrors.province = t('merchant.provinceRequired');
+    }
+
+    if (
+      formData.coordinates.latitude === null ||
+      formData.coordinates.longitude === null
+    ) {
+      newErrors.coordinates = t('merchant.locationRequired');
     }
 
     setErrors(newErrors);
@@ -371,6 +405,49 @@ export default function CreateStoreScreen() {
         mode="outlined"
         keyboardType="numeric"
       />
+
+      <Button
+        mode="outlined"
+        icon="crosshairs-gps"
+        onPress={getCurrentLocation}
+        style={styles.input}
+      >
+        {t('merchant.useCurrentLocation')}
+      </Button>
+
+      <View style={styles.mapContainer}>
+        <MapView
+          style={styles.map}
+          initialRegion={{
+            latitude: formData.coordinates.latitude || 34.5553,
+            longitude: formData.coordinates.longitude || 69.2075,
+            latitudeDelta: 0.05,
+            longitudeDelta: 0.05,
+          }}
+          onPress={(e) =>
+            setFormData((prev) => ({
+              ...prev,
+              coordinates: e.nativeEvent.coordinate,
+            }))
+          }
+        >
+          {formData.coordinates.latitude && (
+            <Marker
+              coordinate={formData.coordinates}
+              draggable
+              onDragEnd={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  coordinates: e.nativeEvent.coordinate,
+                }))
+              }
+            />
+          )}
+        </MapView>
+      </View>
+      <HelperText type="error" visible={!!errors.coordinates}>
+        {errors.coordinates}
+      </HelperText>
     </View>
   );
 
@@ -563,6 +640,15 @@ const styles = StyleSheet.create({
   },
   input: {
     marginBottom: 8,
+  },
+  mapContainer: {
+    height: 200,
+    borderRadius: 8,
+    overflow: 'hidden',
+    marginBottom: 8,
+  },
+  map: {
+    flex: 1,
   },
   row: {
     flexDirection: 'row',
