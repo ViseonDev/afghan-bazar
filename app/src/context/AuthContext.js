@@ -24,8 +24,8 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuthState = async () => {
     try {
-      const storedToken = await AsyncStorage.getItem('token');
-      const storedUser = await AsyncStorage.getItem('user');
+      const storedToken = await getItem('token');
+      const storedUser = await getItem('user');
       if (storedToken && storedUser) {
         setToken(storedToken);
         setUser(JSON.parse(storedUser));
@@ -45,8 +45,8 @@ export const AuthProvider = ({ children }) => {
 
       if (response.success) {
         const { token: newToken, user: newUser } = response;
-        await AsyncStorage.setItem('token', newToken);
-        await AsyncStorage.setItem('user', JSON.stringify(newUser));
+        await setItem('token', newToken);
+        await setItem('user', JSON.stringify(newUser));
         
         setToken(newToken);
         setUser(newUser);
@@ -88,8 +88,8 @@ export const AuthProvider = ({ children }) => {
       if (response.success) {
         const { token: newToken, user: newUser } = response;
 
-        await AsyncStorage.setItem('token', newToken);
-        await AsyncStorage.setItem('user', JSON.stringify(newUser));
+        await setItem('token', newToken);
+        await setItem('user', JSON.stringify(newUser));
 
         setToken(newToken);
         setUser(newUser);
@@ -131,8 +131,8 @@ export const AuthProvider = ({ children }) => {
         await authAPI.logout();
       }
       
-      await AsyncStorage.removeItem('token');
-      await AsyncStorage.removeItem('user');
+      await removeItem('token');
+      await removeItem('user');
 
       setToken(null);
       setUser(null);
@@ -157,7 +157,7 @@ export const AuthProvider = ({ children }) => {
 
       if (response.success) {
         const updatedUser = response.user;
-        await AsyncStorage.setItem('user', JSON.stringify(updatedUser));
+        await setItem('user', JSON.stringify(updatedUser));
         setUser(updatedUser);
 
         showMessage({

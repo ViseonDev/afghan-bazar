@@ -1,10 +1,10 @@
 import React from 'react';
 import { render, act } from '@testing-library/react-native';
 import { AuthProvider, useAuth } from '../context/AuthContext';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as storage from '../services/storage';
 import { authAPI } from '../services/api';
 
-jest.mock('@react-native-async-storage/async-storage', () => ({
+jest.mock('../services/storage', () => ({
   setItem: jest.fn(),
   getItem: jest.fn(),
   removeItem: jest.fn(),
@@ -46,7 +46,7 @@ describe('AuthContext', () => {
 
     expect(context.user).toEqual({ id: 1, name: 'John' });
     expect(context.token).toBe('abc123');
-    expect(AsyncStorage.setItem).toHaveBeenCalledWith('token', 'abc123');
-    expect(AsyncStorage.setItem).toHaveBeenCalledWith('user', JSON.stringify({ id: 1, name: 'John' }));
+    expect(storage.setItem).toHaveBeenCalledWith('token', 'abc123');
+    expect(storage.setItem).toHaveBeenCalledWith('user', JSON.stringify({ id: 1, name: 'John' }));
   });
 });
