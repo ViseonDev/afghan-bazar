@@ -11,9 +11,17 @@ jest.mock('../context/LanguageContext', () => ({
 }));
 
 jest.mock('../services/api', () => ({
-  productsAPI: { getProducts: jest.fn().mockResolvedValue({ success: true, data: [] }) },
-  storesAPI: { getStores: jest.fn().mockResolvedValue({ success: true, data: [] }) },
-  categoriesAPI: { getFeaturedCategories: jest.fn().mockResolvedValue({ success: true, data: [] }) },
+  productsAPI: {
+    getProducts: jest.fn().mockResolvedValue({ success: true, data: [] }),
+  },
+  storesAPI: {
+    getStores: jest.fn().mockResolvedValue({ success: true, data: [] }),
+  },
+  categoriesAPI: {
+    getFeaturedCategories: jest
+      .fn()
+      .mockResolvedValue({ success: true, data: [] }),
+  },
 }));
 
 jest.mock('@expo/vector-icons', () => ({ Ionicons: () => null }));

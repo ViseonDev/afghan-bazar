@@ -37,7 +37,7 @@ describe('AuthContext', () => {
     render(
       <AuthProvider>
         <Capture />
-      </AuthProvider>
+      </AuthProvider>,
     );
 
     await act(async () => {
@@ -47,6 +47,9 @@ describe('AuthContext', () => {
     expect(context.user).toEqual({ id: 1, name: 'John' });
     expect(context.token).toBe('abc123');
     expect(storage.setItem).toHaveBeenCalledWith('token', 'abc123');
-    expect(storage.setItem).toHaveBeenCalledWith('user', JSON.stringify({ id: 1, name: 'John' }));
+    expect(storage.setItem).toHaveBeenCalledWith(
+      'user',
+      JSON.stringify({ id: 1, name: 'John' }),
+    );
   });
 });

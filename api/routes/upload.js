@@ -56,7 +56,7 @@ router.post('/single', auth, upload.single('image'), async (req, res) => {
       });
     }
 
-    const { type = 'general', resize } = req.body;
+    const { resize } = req.body;
     const originalPath = req.file.path;
     const filename = req.file.filename;
     const baseUrl = `${req.protocol}://${req.get('host')}`;
@@ -113,7 +113,7 @@ router.post('/multiple', auth, upload.array('images', 10), async (req, res) => {
       });
     }
 
-    const { type = 'general', resize } = req.body;
+    const { resize } = req.body;
     const baseUrl = `${req.protocol}://${req.get('host')}`;
     const uploadedImages = [];
 
