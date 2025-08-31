@@ -91,6 +91,12 @@ const validateStore = [
     .optional()
     .isEmail()
     .withMessage('Please provide a valid email'),
+  body('coordinates.latitude')
+    .isFloat({ min: -90, max: 90 })
+    .withMessage('Valid latitude is required'),
+  body('coordinates.longitude')
+    .isFloat({ min: -180, max: 180 })
+    .withMessage('Valid longitude is required'),
   handleValidationErrors
 ];
 

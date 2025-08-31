@@ -21,6 +21,7 @@ import {
 } from 'react-native-paper';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
+import MapView, { Marker } from 'react-native-maps';
 import { theme } from '../../theme/theme';
 import { useLanguage } from '../../context/LanguageContext';
 import { useAuth } from '../../context/AuthContext';
@@ -347,6 +348,9 @@ export default function ProductDetailScreen() {
             >
               <View style={styles.storeInfo}>
                 <Text style={styles.storeName}>{product.storeId.name}</Text>
+                {product.storeId.phone && (
+                  <Text style={styles.storePhone}>{product.storeId.phone}</Text>
+                )}
                 <Text style={styles.storeLocation}>
                   {product.storeId.address}, {product.storeId.city}
                 </Text>
@@ -357,6 +361,28 @@ export default function ProductDetailScreen() {
                 color={theme.colors.placeholder}
               />
             </TouchableOpacity>
+            {product.storeId.coordinates?.latitude &&
+              product.storeId.coordinates?.longitude && (
+                <View style={styles.mapContainer}>
+                  <MapView
+                    style={styles.map}
+                    initialRegion={{
+                      latitude: product.storeId.coordinates.latitude,
+                      longitude: product.storeId.coordinates.longitude,
+                      latitudeDelta: 0.01,
+                      longitudeDelta: 0.01,
+                    }}
+                    pointerEvents="none"
+                  >
+                    <Marker
+                      coordinate={{
+                        latitude: product.storeId.coordinates.latitude,
+                        longitude: product.storeId.coordinates.longitude,
+                      }}
+                    />
+                  </MapView>
+                </View>
+              )}
 
             <View style={styles.contactButtons}>
               {product.storeId.phone && (
@@ -565,9 +591,23 @@ const styles = StyleSheet.create({
     color: theme.colors.text,
     marginBottom: 4,
   },
+  storePhone: {
+    fontSize: 14,
+    color: theme.colors.text,
+    marginBottom: 4,
+  },
   storeLocation: {
     fontSize: 14,
     color: theme.colors.placeholder,
+  },
+  mapContainer: {
+    height: 150,
+    borderRadius: 8,
+    overflow: 'hidden',
+    marginBottom: 16,
+  },
+  map: {
+    flex: 1,
   },
   contactButtons: {
     flexDirection: 'row',

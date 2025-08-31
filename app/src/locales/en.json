@@ -204,7 +204,10 @@
     "totalFavorites": "Total Favorites",
     "averageRating": "Average Rating",
     "activeProducts": "Active Products",
-    "recentActivity": "Recent Activity"
+    "recentActivity": "Recent Activity",
+    "useCurrentLocation": "Use Current Location",
+    "locationRequired": "Store location is required",
+    "locationPermissionDenied": "Permission to access location was denied"
   },
   "admin": {
     "dashboard": "Admin Dashboard",
