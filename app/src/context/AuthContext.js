@@ -47,7 +47,7 @@ export const AuthProvider = ({ children }) => {
         const { token: newToken, user: newUser } = response;
         await setItem('token', newToken);
         await setItem('user', JSON.stringify(newUser));
-        
+
         setToken(newToken);
         setUser(newUser);
 
@@ -130,7 +130,7 @@ export const AuthProvider = ({ children }) => {
       if (token) {
         await authAPI.logout();
       }
-      
+
       await removeItem('token');
       await removeItem('user');
 

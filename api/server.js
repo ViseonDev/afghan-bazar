@@ -12,7 +12,6 @@ const redis = require('redis');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./swagger');
 
-const config = require('./config');
 const logger = require('./utils/logger');
 const errorHandler = require('./middleware/errorHandler');
 const { authenticate } = require('./middleware/auth');

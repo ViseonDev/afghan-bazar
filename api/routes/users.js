@@ -229,7 +229,6 @@ router.get('/admin/dashboard', authorize('admin', 'moderator'), async (req, res)
     }
 
     const Flag = require('../models/Flag');
-    const ChatMessage = require('../models/ChatMessage');
 
     // Basic stats
     const stats = {
